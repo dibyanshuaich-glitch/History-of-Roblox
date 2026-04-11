@@ -3,155 +3,482 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sswayam's websites Hub</title>
+    <title>Sswayam's Mega Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --roblox-red: #ff3232;
-            --aethoria-purple: #a020f0;
+            --aethoria-purple: #c026d3;
             --endurance-blue: #00d4ff;
             --minecraft-green: #46bb42;
-            --bg-dark: #0f172a;
+            --terraria-green: #22c55e;
+            --bg: #060b14;
+            --surface: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.07);
         }
 
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-            color: #f8fafc;
-            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* ── CANVAS BACKGROUND ── */
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ── SCANLINE OVERLAY ── */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 3px,
+                rgba(0,0,0,0.07) 3px,
+                rgba(0,0,0,0.07) 4px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* ── LAYOUT ── */
+        .page-wrap {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow-x: hidden;
+            padding: 3rem 1.5rem;
         }
 
-        /* Floating Animation for the whole container */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        .hub {
+            width: 100%;
+            max-width: 520px;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            padding: 3rem;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        /* ── HEADER ── */
+        .header {
             text-align: center;
-            width: 90%;
-            max-width: 450px;
-            animation: float 6s ease-in-out infinite;
+            margin-bottom: 3rem;
         }
+
+        .header-eyebrow {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.35em;
+            color: #00d4ff;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .header-eyebrow::before { content: '[ '; }
+        .header-eyebrow::after  { content: ' ]'; }
 
         h1 {
-    font-size: 2.8rem;
-    background: linear-gradient(to right, #00d4ff, #a020f0);
-    
-    /* Add this standard property */
-    background-clip: text; 
-    
-    /* Keep this for Chrome/Safari compatibility */
-    -webkit-background-clip: text; 
-    
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0;
-    filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
-}
-        .subtitle {
-            color: #94a3b8;
-            margin-bottom: 2.5rem;
-            letter-spacing: 2px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: clamp(2.2rem, 6vw, 3.4rem);
+            line-height: 1;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #fff 0%, #00d4ff 50%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 18px rgba(0,212,255,0.25));
         }
 
-        /* Button Logic */
-        .project-card {
-            position: relative;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 1.5rem;
-            padding: 20px;
-            border-radius: 16px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            overflow: hidden;
-        }
-
-        .project-name {
-            display: block;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #fff;
-            transition: transform 0.3s ease;
-        }
-
-        .description {
+        .header-sub {
+            margin-top: 1rem;
             font-size: 0.85rem;
-            color: #cbd5e1;
-            margin-top: 8px;
-            max-height: 0;
-            opacity: 0;
-            transition: all 0.3s ease;
+            letter-spacing: 0.25em;
+            color: #475569;
+            text-transform: uppercase;
+            font-weight: 600;
         }
 
-        /* Hover States */
-        .project-card:hover {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.08);
+        /* ── DIVIDER ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1));
+        }
+        .divider::after { transform: scaleX(-1); }
+        .divider span {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: #334155;
+            letter-spacing: 0.2em;
         }
 
-        .project-card:hover .description {
-            max-height: 50px;
-            opacity: 1;
+        /* ── CARDS ── */
+        .cards { display: flex; flex-direction: column; gap: 0.9rem; }
+
+        .card {
+            position: relative;
+            display: block;
+            text-decoration: none;
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: rgba(8, 15, 28, 0.8);
+            border: 1px solid var(--border);
         }
 
-        /* Individual Colors */
-        .btn-roblox:hover { border-color: var(--roblox-red); box-shadow: 0 0 20px rgba(255, 50, 50, 0.3); }
-        .btn-aethoria:hover { border-color: var(--aethoria-purple); box-shadow: 0 0 20px rgba(160, 32, 240, 0.3); }
-        .btn-endurance:hover { border-color: var(--endurance-blue); box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
-        .btn-minecraft:hover { border-color: var(--minecraft-green); box-shadow: 0 0 20px rgba(70, 187, 66, 0.3); }
+        .card:hover { transform: translateX(8px) scale(1.015); }
 
+        /* accent bar on left */
+        .card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            border-radius: 12px 0 0 12px;
+            background: var(--accent);
+            box-shadow: 0 0 14px var(--accent);
+            transition: width 0.3s ease;
+        }
+        .card:hover::before { width: 5px; }
+
+        /* shimmer sweep */
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 50%, transparent 60%);
+            transform: translateX(-100%);
+            transition: transform 0.55s ease;
+        }
+        .card:hover::after { transform: translateX(100%); }
+
+        .card-inner {
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+            padding: 1.1rem 1.3rem 1.1rem 1.5rem;
+        }
+
+        /* icon badge */
+        .card-icon {
+            flex-shrink: 0;
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            border: 1px solid var(--accent);
+            background: color-mix(in srgb, var(--accent) 12%, transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
+            transition: box-shadow 0.3s;
+        }
+        .card:hover .card-icon {
+            box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 55%, transparent);
+        }
+
+        .card-text { flex: 1; min-width: 0; }
+
+        .card-name {
+            display: block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.3s;
+        }
+        .card:hover .card-name { color: color-mix(in srgb, var(--accent) 80%, #fff); }
+
+        .card-desc {
+            display: block;
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 3px;
+            letter-spacing: 0.02em;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .card:hover .card-desc { color: #64748b; }
+
+        .card-arrow {
+            flex-shrink: 0;
+            font-size: 1rem;
+            color: #1e293b;
+            transition: color 0.3s, transform 0.3s;
+        }
+        .card:hover .card-arrow {
+            color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        /* ── INDIVIDUAL CARD THEMES ── */
+        .card-roblox     { --accent: var(--roblox-red); }
+        .card-aethoria   { --accent: var(--aethoria-purple); }
+        .card-minecraft  { --accent: var(--minecraft-green); }
+        .card-terraria   { --accent: var(--terraria-green); }
+        .card-endurance  { --accent: var(--endurance-blue); }
+
+        /* ── FOOTER ── */
         .footer {
-            margin-top: 2rem;
-            font-size: 0.75rem;
-            color: #64748b;
+            margin-top: 2.5rem;
+            text-align: center;
+        }
+
+        .footer-line {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: #1e293b;
+        }
+
+        .footer-line span {
+            color: #334155;
+        }
+
+        /* ── GLITCH TITLE EFFECT ── */
+        @keyframes glitch-clip {
+            0%   { clip-path: inset(0 0 95% 0); transform: translateX(-3px); }
+            25%  { clip-path: inset(30% 0 60% 0); transform: translateX(3px); }
+            50%  { clip-path: inset(60% 0 30% 0); transform: translateX(-3px); }
+            75%  { clip-path: inset(80% 0 0 0); transform: translateX(3px); }
+            100% { clip-path: inset(0 0 95% 0); transform: translateX(0); }
+        }
+
+        .glitch-wrap { position: relative; display: inline-block; }
+
+        .glitch-wrap::before,
+        .glitch-wrap::after {
+            content: attr(data-text);
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #fff 0%, #00d4ff 50%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+        }
+
+        .glitch-wrap:hover::before {
+            opacity: 0.7;
+            animation: glitch-clip 0.4s steps(1) forwards;
+            filter: drop-shadow(2px 0 #ff3232);
+        }
+        .glitch-wrap:hover::after {
+            opacity: 0.5;
+            animation: glitch-clip 0.4s steps(1) 0.05s forwards;
+            filter: drop-shadow(-2px 0 #00d4ff);
+        }
+
+        /* ── STAGGER ENTRANCE ── */
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .header        { animation: slide-up 0.6s ease both; }
+        .divider       { animation: slide-up 0.6s 0.2s ease both; }
+        .card:nth-child(1) { animation: slide-up 0.5s 0.25s ease both; }
+        .card:nth-child(2) { animation: slide-up 0.5s 0.35s ease both; }
+        .card:nth-child(3) { animation: slide-up 0.5s 0.45s ease both; }
+        .card:nth-child(4) { animation: slide-up 0.5s 0.55s ease both; }
+        .card:nth-child(5) { animation: slide-up 0.5s 0.65s ease both; }
+        .footer        { animation: slide-up 0.5s 0.75s ease both; }
+
+        /* ── STATUS DOT ── */
+        .status-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 6px #22c55e;
+            animation: pulse-dot 2s ease-in-out infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        @keyframes pulse-dot {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>PROJECT HUB</h1>
-        <p class="subtitle">Secure Access: Sswayam</p>
+<canvas id="bg-canvas"></canvas>
 
-        <a href="Roblox-Encyclopedia.html" class="project-card btn-roblox">
-            <span class="project-name">Roblox Encyclopedia</span>
-            <div class="description">Explore the massive lore and history of Roblox.</div>
-        </a>
+<div class="page-wrap">
+    <div class="hub">
 
-        <a href="Aethoria.html" class="project-card btn-aethoria">
-            <span class="project-name">Aethoria: The Game</span>
-            <div class="description">Enter a unique world of mystery (Under Construction) Probably be discarded in future.</div>
-        </a>
-
-        <a href="Minecraft-Encyclopedia.html" class="project-card btn-minecraft">
-            <span class="project-name">Minecraft Encyclopedia</span>
-            <div class="description">The ultimate guide to the history of Minecraft.</div>
-        </a>
-
-        <a href="Endurance/Endurance.html" class="project-card btn-endurance">
-            <span class="project-name">Endurance</span>
-            <div class="description">Test your skills in this high-intensity 3D experience.</div>
-        </a>
-
-        <div class="footer">
-            EST. 2026 | Built for the Future by Sswayam
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-eyebrow">SSWAYAM • Random Websites</div>
+            <h1>
+                <span class="glitch-wrap" data-text="WEBSITES">WEBSITES</span>
+            </h1>
+            <p class="header-sub"><span class="status-dot"></span>5 Projects Active — Select a Portal</p>
         </div>
-    </div>
 
+        <div class="divider"><span>NAVIGATE</span></div>
+
+        <!-- CARDS -->
+        <div class="cards">
+
+            <a href="Roblox-Encyclopedia.html" class="card card-roblox">
+                <div class="card-inner">
+                    <div class="card-icon">🧱</div>
+                    <div class="card-text">
+                        <span class="card-name">Roblox Encyclopedia</span>
+                        <span class="card-desc">Deep lore, history & hidden secrets of the block universe</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </div>
+            </a>
+
+            <a href="Aethoria.html" class="card card-aethoria">
+                <div class="card-inner">
+                    <div class="card-icon">🔮</div>
+                    <div class="card-text">
+                        <span class="card-name">Aethoria: The Game</span>
+                        <span class="card-desc">An arcane realm of myth, magic & untold stories</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </div>
+            </a>
+
+            <a href="Minecraft-Encyclopedia.html" class="card card-minecraft">
+                <div class="card-inner">
+                    <div class="card-icon">⛏️</div>
+                    <div class="card-text">
+                        <span class="card-name">Minecraft Encyclopedia</span>
+                        <span class="card-desc">Every block, mob & biome — the ultimate crafting codex</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </div>
+            </a>
+
+            <a href="Terraria-Encyclopedia.html" class="card card-terraria">
+                <div class="card-inner">
+                    <div class="card-icon">⚔️</div>
+                    <div class="card-text">
+                        <span class="card-name">Terraria Encyclopedia</span>
+                        <span class="card-desc">Dig deeper, fight harder — conquer every boss & biome</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </div>
+            </a>
+
+            <a href="Endurance/Endurance.html" class="card card-endurance">
+                <div class="card-inner">
+                    <div class="card-icon">🛸</div>
+                    <div class="card-text">
+                        <span class="card-name">Endurance</span>
+                        <span class="card-desc">High-octane 3D survival — push past the limit</span>
+                    </div>
+                    <div class="card-arrow">›</div>
+                </div>
+            </a>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p class="footer-line">EST. 2026 &nbsp;|&nbsp; <span>BUILT FOR THE FUTURE BY SSWAYAM</span></p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+/* ── STAR FIELD CANVAS ── */
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, stars = [], nebula = [];
+
+function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+}
+
+function initStars() {
+    stars = Array.from({ length: 160 }, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.2 + 0.2,
+        a: Math.random(),
+        speed: Math.random() * 0.3 + 0.05,
+        da: (Math.random() - 0.5) * 0.008
+    }));
+
+    nebula = [
+        { x: W * 0.15, y: H * 0.2,  r: 260, c: 'rgba(0,212,255,0.028)' },
+        { x: W * 0.85, y: H * 0.75, r: 300, c: 'rgba(160,32,240,0.025)' },
+        { x: W * 0.5,  y: H * 0.5,  r: 350, c: 'rgba(255,50,50,0.012)' },
+    ];
+}
+
+function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    nebula.forEach(n => {
+        const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+        g.addColorStop(0, n.c);
+        g.addColorStop(1, 'transparent');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    stars.forEach(s => {
+        s.a += s.da;
+        if (s.a > 1 || s.a < 0) s.da *= -1;
+        ctx.globalAlpha = Math.max(0, Math.min(1, s.a));
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', () => { resize(); initStars(); });
+resize(); initStars(); draw();
+
+/* ── MOUSE PARALLAX ON NEBULAE ── */
+document.addEventListener('mousemove', e => {
+    const dx = (e.clientX / W - 0.5) * 18;
+    const dy = (e.clientY / H - 0.5) * 18;
+    nebula[0].x = W * 0.15 + dx;
+    nebula[0].y = H * 0.2  + dy;
+    nebula[1].x = W * 0.85 - dx;
+    nebula[1].y = H * 0.75 - dy;
+});
+</script>
 </body>
 </html>
