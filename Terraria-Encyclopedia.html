@@ -1,0 +1,4439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Terraria World — The Ultimate Fan Encyclopedia</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet"/>
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  --sky-top: #1a0a2e;
+  --sky-mid: #0d1b3e;
+  --sky-bottom: #163347;
+  --dirt: #6b4423;
+  --dirt-dark: #4a2e12;
+  --stone: #7a7a7a;
+  --stone-dark: #4a4a4a;
+  --grass: #3a8c2f;
+  --grass-bright: #5ecb4b;
+  --gold: #f5c518;
+  --gold-dark: #c49b0a;
+  --copper: #c8631a;
+  --silver: #b0b8c0;
+  --crimson: #d63031;
+  --corruption: #7e3cce;
+  --hallow: #e84393;
+  --jungle: #2d8c3e;
+  --ocean: #1a5fb4;
+  --lava: #ff6b00;
+  --bg: #0a0a14;
+  --panel-bg: rgba(10,15,35,0.92);
+  --panel-border: #3a5f8a;
+  --text-main: #e8dcc8;
+  --text-bright: #ffffff;
+  --text-gold: #f5c518;
+  --text-muted: #8a9ab0;
+  --pixel-size: 3px;
+  --hp-color: #e84040;
+  --mana-color: #4080ff;
+}
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'VT323', monospace;
+  background: var(--bg);
+  color: var(--text-main);
+  overflow-x: hidden;
+  cursor: default;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+/* ===== PIXEL CURSOR ===== */
+body { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect x='0' y='0' width='4' height='4' fill='%23fff'/><rect x='4' y='4' width='4' height='4' fill='%23fff'/><rect x='8' y='8' width='4' height='4' fill='%23fff'/></svg>") 0 0, crosshair; }
+
+/* ===== PIXEL FONT UTIL ===== */
+.pixel { font-family: 'Press Start 2P', monospace; }
+.vt323 { font-family: 'VT323', monospace; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--dirt-dark); }
+::-webkit-scrollbar-thumb { background: var(--stone); image-rendering: pixelated; border: 2px solid var(--stone-dark); }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ===== SELECTION ===== */
+::selection { background: var(--gold); color: #000; }
+
+/* ===== NAV ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(5,8,20,0.95);
+  border-bottom: 4px solid var(--gold);
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 54px;
+  image-rendering: pixelated;
+  box-shadow: 0 4px 0 var(--gold-dark), 0 8px 0 rgba(0,0,0,0.6);
+}
+
+.nav-logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  text-shadow: 2px 2px 0 #7a5500, -1px -1px 0 #ffdd44;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  list-style: none;
+  justify-content: flex-end;
+}
+
+.nav-links li a {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--text-main);
+  text-decoration: none;
+  padding: 6px 8px;
+  border: 2px solid transparent;
+  display: block;
+  transition: all 0.1s;
+  image-rendering: pixelated;
+  text-transform: uppercase;
+}
+
+.nav-links li a:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(245,197,24,0.1);
+  box-shadow: inset 0 0 0 1px rgba(245,197,24,0.2);
+}
+
+/* ===== HERO SECTION ===== */
+#hero {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#hero-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: 20px;
+}
+
+.hero-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(24px, 5vw, 52px);
+  color: var(--gold);
+  text-shadow:
+    4px 4px 0 #7a4400,
+    8px 8px 0 rgba(0,0,0,0.5),
+    0 0 40px rgba(245,197,24,0.4);
+  line-height: 1.3;
+  animation: titlePulse 3s ease-in-out infinite;
+  letter-spacing: 2px;
+}
+
+@keyframes titlePulse {
+  0%, 100% { text-shadow: 4px 4px 0 #7a4400, 8px 8px 0 rgba(0,0,0,0.5), 0 0 40px rgba(245,197,24,0.4); }
+  50% { text-shadow: 4px 4px 0 #7a4400, 8px 8px 0 rgba(0,0,0,0.5), 0 0 80px rgba(245,197,24,0.8), 0 0 120px rgba(245,197,24,0.3); }
+}
+
+.hero-subtitle {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(8px, 1.5vw, 14px);
+  color: var(--text-main);
+  margin-top: 20px;
+  text-shadow: 2px 2px 0 #000;
+  opacity: 0.9;
+}
+
+.hero-tagline {
+  font-family: 'VT323', monospace;
+  font-size: clamp(20px, 3vw, 32px);
+  color: var(--grass-bright);
+  margin-top: 12px;
+  text-shadow: 2px 2px 0 #000;
+  animation: blink 1.5s step-end infinite;
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.hero-stats {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.hero-stat {
+  background: rgba(10,15,35,0.85);
+  border: 3px solid var(--gold);
+  padding: 10px 16px;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.6), inset 0 0 20px rgba(245,197,24,0.05);
+}
+
+.hero-stat .stat-val {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: var(--gold);
+  display: block;
+  text-shadow: 2px 2px 0 #7a4400;
+}
+
+.hero-stat .stat-lbl {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 4px;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  animation: bounce 1.5s ease-in-out infinite;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(10px); } }
+
+.scroll-indicator::before {
+  content: '▼';
+  display: block;
+  font-size: 16px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+/* ===== PIXEL GROUND DIVIDER ===== */
+.ground-divider {
+  width: 100%;
+  height: 48px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--grass) 0px, var(--grass) 16px,
+    #2d7426 16px, #2d7426 32px
+  );
+  border-top: 4px solid var(--grass-bright);
+  border-bottom: 4px solid var(--dirt);
+  position: relative;
+}
+
+.ground-divider::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 0; right: 0;
+  height: 20px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--dirt) 0px, var(--dirt) 16px,
+    var(--dirt-dark) 16px, var(--dirt-dark) 32px
+  );
+}
+
+/* ===== SECTION BASE ===== */
+section {
+  padding: 80px 20px;
+  position: relative;
+}
+
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ===== SECTION TITLES ===== */
+.section-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(14px, 2.5vw, 22px);
+  color: var(--gold);
+  text-shadow: 3px 3px 0 #7a4400, 0 0 20px rgba(245,197,24,0.3);
+  margin-bottom: 12px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 50px;
+}
+
+.section-divider span {
+  font-size: 20px;
+  color: var(--gold);
+}
+
+.section-divider::before, .section-divider::after {
+  content: '';
+  flex: 1;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  max-width: 300px;
+}
+
+/* ===== PIXEL PANEL ===== */
+.pixel-panel {
+  background: var(--panel-bg);
+  border: 4px solid var(--panel-border);
+  box-shadow:
+    6px 6px 0 rgba(0,0,0,0.6),
+    inset 0 0 0 2px rgba(255,255,255,0.05);
+  padding: 24px;
+  position: relative;
+  image-rendering: pixelated;
+}
+
+.pixel-panel::before {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px; right: 3px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+
+/* ===== HISTORY SECTION ===== */
+#history { background: linear-gradient(180deg, #080c1e 0%, #0d1420 100%); }
+
+.timeline {
+  position: relative;
+  padding-left: 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0; bottom: 0;
+  width: 4px;
+  background: repeating-linear-gradient(
+    180deg,
+    var(--gold) 0px, var(--gold) 8px,
+    transparent 8px, transparent 16px
+  );
+}
+
+.timeline-item {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 50px;
+  align-items: flex-start;
+  position: relative;
+}
+
+.timeline-item:nth-child(odd) { flex-direction: row; }
+.timeline-item:nth-child(even) { flex-direction: row-reverse; }
+
+.timeline-item .tl-content {
+  flex: 1;
+  max-width: calc(50% - 40px);
+}
+
+.timeline-item:nth-child(odd) .tl-content { text-align: right; }
+.timeline-item:nth-child(even) .tl-content { text-align: left; }
+
+.timeline-dot {
+  width: 28px;
+  height: 28px;
+  background: var(--gold);
+  border: 4px solid #fff;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 12px rgba(245,197,24,0.8);
+  margin-top: 8px;
+  animation: dotGlow 2s ease-in-out infinite;
+}
+
+@keyframes dotGlow {
+  0%, 100% { box-shadow: 0 0 12px rgba(245,197,24,0.8); }
+  50% { box-shadow: 0 0 24px rgba(245,197,24,1), 0 0 40px rgba(245,197,24,0.4); }
+}
+
+.tl-year {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--gold);
+  text-shadow: 2px 2px 0 #7a4400;
+  margin-bottom: 8px;
+}
+
+.tl-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--text-bright);
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.tl-desc {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* ===== UPDATE BADGES ===== */
+.update-badge {
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 4px 8px;
+  background: var(--corruption);
+  border: 2px solid #a060ff;
+  color: #fff;
+  margin: 3px 2px;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.update-badge.gold { background: var(--gold-dark); border-color: var(--gold); color: #000; }
+.update-badge.crimson { background: var(--crimson); border-color: #ff8080; }
+.update-badge.jungle { background: var(--jungle); border-color: #80ff80; }
+.update-badge.ocean { background: var(--ocean); border-color: #80c0ff; }
+
+/* ===== FIGURES SECTION ===== */
+#figures { background: linear-gradient(180deg, #0d1420 0%, #0a101a 100%); }
+
+.figures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.figure-card {
+  background: rgba(10,15,35,0.95);
+  border: 4px solid var(--panel-border);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.6);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.figure-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 rgba(0,0,0,0.6);
+  border-color: var(--gold);
+}
+
+.figure-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--gold);
+}
+
+.figure-avatar {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.pixel-character {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  grid-template-columns: repeat(8, 8px);
+  grid-template-rows: repeat(8, 8px);
+}
+
+.figure-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--gold);
+  text-shadow: 2px 2px 0 #7a4400;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.figure-alias {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--hallow);
+  margin-bottom: 8px;
+}
+
+.figure-role {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--grass-bright);
+  padding: 3px 8px;
+  border: 2px solid var(--grass);
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.figure-desc {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* ===== YOUTUBERS SECTION ===== */
+#youtubers { background: linear-gradient(180deg, #0a101a 0%, #0d0a1e 100%); }
+
+.youtubers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.yt-card {
+  background: rgba(15,10,30,0.95);
+  border: 3px solid var(--crimson);
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.6);
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.1s;
+}
+
+.yt-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 rgba(0,0,0,0.6);
+  border-color: var(--gold);
+}
+
+.yt-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 12px;
+  background: var(--crimson);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 3px solid var(--gold);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+}
+
+.yt-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--gold);
+  text-shadow: 1px 1px 0 #7a4400;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.yt-subs {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--grass-bright);
+  margin-bottom: 8px;
+}
+
+.yt-desc {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+.yt-tag {
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px;
+  padding: 3px 6px;
+  background: rgba(126,60,206,0.3);
+  border: 1px solid var(--corruption);
+  color: #c080ff;
+  margin: 2px;
+}
+
+/* ===== LORE SECTION ===== */
+#lore { background: linear-gradient(180deg, #0d0a1e 0%, #0a0814 100%); }
+
+.lore-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+@media (max-width: 700px) { .lore-content { grid-template-columns: 1fr; } }
+
+.lore-block {
+  background: rgba(10,8,20,0.95);
+  border: 4px solid var(--corruption);
+  padding: 24px;
+  position: relative;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.7);
+}
+
+.lore-block.crimson-block { border-color: var(--crimson); }
+.lore-block.hallow-block { border-color: var(--hallow); }
+.lore-block.gold-block { border-color: var(--gold); }
+
+.lore-block-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.lore-block.crimson-block .lore-block-title { color: var(--crimson); }
+.lore-block .lore-block-title { color: var(--corruption); }
+.lore-block.hallow-block .lore-block-title { color: var(--hallow); }
+.lore-block.gold-block .lore-block-title { color: var(--gold); }
+
+.lore-text {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+
+/* ===== BOSSES SECTION ===== */
+#bosses { background: linear-gradient(180deg, #0a0814 0%, #12050a 100%); }
+
+.bosses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.boss-card {
+  background: rgba(18,5,12,0.97);
+  border: 4px solid var(--crimson);
+  padding: 20px;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.7);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.15s;
+}
+
+.boss-card:hover {
+  transform: translate(-3px,-3px);
+  box-shadow: 9px 9px 0 rgba(0,0,0,0.7);
+  border-color: #ff8080;
+}
+
+.boss-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--crimson);
+}
+
+.boss-pixel {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+  image-rendering: pixelated;
+  font-size: 36px;
+  line-height: 1;
+}
+
+.boss-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--crimson);
+  text-shadow: 1px 1px 0 #7a0000;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.boss-type {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.boss-desc {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.boss-hp {
+  margin-top: 10px;
+}
+
+.bar-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px;
+  color: var(--hp-color);
+  margin-bottom: 3px;
+}
+
+.hp-bar {
+  height: 10px;
+  background: #2a0a0a;
+  border: 2px solid #5a2020;
+  position: relative;
+  overflow: hidden;
+}
+
+.hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c02020, var(--hp-color));
+  transition: width 0.5s;
+  position: relative;
+}
+
+.hp-fill::after {
+  content: '';
+  position: absolute;
+  top: 1px; left: 0; right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.2);
+}
+
+/* ===== UPDATES SECTION ===== */
+#updates { background: linear-gradient(180deg, #12050a 0%, #080c20 100%); }
+
+.updates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.update-card {
+  background: rgba(8,12,32,0.97);
+  border: 4px solid var(--ocean);
+  padding: 20px;
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.6);
+  transition: all 0.15s;
+}
+
+.update-card:hover {
+  transform: translate(-2px,-2px);
+  box-shadow: 7px 7px 0 rgba(0,0,0,0.6);
+  border-color: #80c0ff;
+}
+
+.update-version {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  text-shadow: 2px 2px 0 #7a4400;
+  margin-bottom: 6px;
+}
+
+.update-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--ocean);
+  margin-bottom: 4px;
+  line-height: 1.6;
+  color: #80c0ff;
+}
+
+.update-date {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.update-desc {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* ===== BIOMES SECTION ===== */
+#biomes { background: linear-gradient(180deg, #080c20 0%, #051808 100%); }
+
+.biomes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.biome-card {
+  padding: 20px;
+  border: 4px solid;
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.7);
+  transition: all 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+.biome-card:hover {
+  transform: translate(-3px,-3px);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.7);
+}
+
+.biome-forest { border-color: var(--grass); background: rgba(20,40,10,0.95); }
+.biome-desert { border-color: #c8a040; background: rgba(40,30,5,0.95); }
+.biome-snow { border-color: #c0d8f0; background: rgba(10,20,40,0.95); }
+.biome-jungle { border-color: var(--jungle); background: rgba(5,25,10,0.95); }
+.biome-ocean { border-color: var(--ocean); background: rgba(5,15,35,0.95); }
+.biome-corruption { border-color: var(--corruption); background: rgba(20,5,40,0.95); }
+.biome-crimson { border-color: var(--crimson); background: rgba(35,5,10,0.95); }
+.biome-hallow { border-color: var(--hallow); background: rgba(40,5,25,0.95); }
+.biome-underworld { border-color: var(--lava); background: rgba(30,8,0,0.95); }
+.biome-dungeon { border-color: #4060c0; background: rgba(5,10,30,0.95); }
+.biome-sky { border-color: #80c0ff; background: rgba(5,15,30,0.95); }
+.biome-mushroom { border-color: #c080ff; background: rgba(20,5,30,0.95); }
+
+.biome-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+
+.biome-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.biome-forest .biome-name { color: var(--grass-bright); }
+.biome-desert .biome-name { color: #f0c860; }
+.biome-snow .biome-name { color: #c0d8f0; }
+.biome-jungle .biome-name { color: #60d080; }
+.biome-ocean .biome-name { color: #80c0ff; }
+.biome-corruption .biome-name { color: #c080ff; }
+.biome-crimson .biome-name { color: #ff8080; }
+.biome-hallow .biome-name { color: var(--hallow); }
+.biome-underworld .biome-name { color: var(--lava); }
+.biome-dungeon .biome-name { color: #8090ff; }
+.biome-sky .biome-name { color: #a0d0ff; }
+.biome-mushroom .biome-name { color: #d080ff; }
+
+.biome-desc {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* ===== MINIGAMES SECTION ===== */
+#minigames { background: linear-gradient(180deg, #051808 0%, #0a0814 100%); }
+
+.minigames-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 30px;
+}
+
+.game-container {
+  background: rgba(5,8,20,0.98);
+  border: 4px solid var(--gold);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.7);
+}
+
+.game-header {
+  background: linear-gradient(90deg, #1a1000, #2a2000, #1a1000);
+  border-bottom: 3px solid var(--gold);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.game-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--gold);
+  text-shadow: 1px 1px 0 #7a4400;
+}
+
+.game-body {
+  padding: 20px;
+}
+
+/* QUIZ GAME */
+#quiz-area {
+  min-height: 280px;
+}
+
+.quiz-question {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+  line-height: 1.8;
+  min-height: 60px;
+}
+
+.quiz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.quiz-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 10px 8px;
+  background: rgba(20,30,60,0.9);
+  border: 3px solid var(--panel-border);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.1s;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.quiz-btn:hover:not(:disabled) {
+  background: rgba(30,50,90,0.9);
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: translate(-1px,-1px);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.quiz-btn.correct { background: rgba(20,60,20,0.9); border-color: var(--grass-bright); color: var(--grass-bright); }
+.quiz-btn.wrong { background: rgba(60,10,10,0.9); border-color: var(--crimson); color: #ff8080; }
+
+.quiz-feedback {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  text-align: center;
+  min-height: 30px;
+  padding: 5px;
+}
+
+.quiz-score {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--gold);
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* ITEM GUESSER GAME */
+#item-game-area { min-height: 280px; }
+
+.item-display {
+  font-size: 48px;
+  text-align: center;
+  padding: 20px;
+  background: rgba(0,0,0,0.4);
+  border: 3px solid var(--stone);
+  margin-bottom: 16px;
+  filter: blur(0px);
+  transition: filter 0.3s;
+  font-family: 'VT323', monospace;
+  color: var(--gold);
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-display.blurred { filter: blur(8px); }
+
+.item-hint {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 16px;
+  min-height: 28px;
+}
+
+.item-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.item-opt-btn {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  padding: 8px;
+  background: rgba(15,20,40,0.9);
+  border: 3px solid var(--panel-border);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.item-opt-btn:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.item-opt-btn.correct { border-color: var(--grass-bright); color: var(--grass-bright); background: rgba(10,40,10,0.9); }
+.item-opt-btn.wrong { border-color: var(--crimson); color: #ff8080; background: rgba(40,5,5,0.9); }
+
+/* PIXEL RUNNER GAME */
+#runner-canvas {
+  display: block;
+  width: 100%;
+  background: #0d1b3e;
+  border: 3px solid var(--stone);
+  image-rendering: pixelated;
+  cursor: pointer;
+}
+
+.runner-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.game-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(180deg, #2a1800, #1a0800);
+  border: 3px solid var(--gold);
+  color: var(--gold);
+  cursor: pointer;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+  transition: all 0.1s;
+  text-transform: uppercase;
+}
+
+.game-btn:hover {
+  background: linear-gradient(180deg, #3a2200, #2a1200);
+  transform: translate(-1px,-1px);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+}
+
+.game-btn:active {
+  transform: translate(2px,2px);
+  box-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+}
+
+.runner-score {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--gold);
+  text-align: center;
+  margin-top: 10px;
+  text-shadow: 2px 2px 0 #7a4400;
+}
+
+/* MEMORY GAME */
+#memory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.mem-card {
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, #1a1040, #0d0820);
+  border: 3px solid var(--panel-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+}
+
+.mem-card:hover:not(.flipped):not(.matched) {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, #2a2050, #1d1830);
+  transform: translate(-1px,-1px);
+}
+
+.mem-card.flipped, .mem-card.matched {
+  background: rgba(20,40,20,0.9);
+  border-color: var(--grass);
+}
+
+.mem-card.matched {
+  border-color: var(--gold);
+  background: rgba(30,25,5,0.9);
+  box-shadow: 0 0 8px rgba(245,197,24,0.4);
+}
+
+.mem-card .card-back { display: none; font-size: 18px; }
+.mem-card .card-front { font-size: 10px; color: var(--stone); }
+.mem-card.flipped .card-back { display: block; }
+.mem-card.flipped .card-front { display: none; }
+.mem-card.matched .card-back { display: block; }
+.mem-card.matched .card-front { display: none; }
+
+.mem-status {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--gold);
+  text-align: center;
+}
+
+/* ===== STATS SECTION ===== */
+#stats { background: linear-gradient(180deg, #0a0814 0%, #050a14 100%); }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-box {
+  background: rgba(5,10,25,0.97);
+  border: 4px solid var(--gold);
+  padding: 20px;
+  text-align: center;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at center top, rgba(245,197,24,0.08), transparent 70%);
+}
+
+.stat-num {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(14px, 3vw, 24px);
+  color: var(--gold);
+  text-shadow: 3px 3px 0 #7a4400;
+  display: block;
+  animation: countUp 0.5s ease-out;
+}
+
+.stat-name {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  display: block;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background: #020408;
+  border-top: 4px solid var(--gold);
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.footer-logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  color: var(--gold);
+  text-shadow: 3px 3px 0 #7a4400;
+  margin-bottom: 16px;
+}
+
+.footer-text {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto 20px;
+  line-height: 1.6;
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.footer-links a {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 10px;
+  border: 2px solid transparent;
+  transition: all 0.1s;
+}
+
+.footer-links a:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.footer-copy {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--stone-dark);
+}
+
+/* ===== PIXEL ART DECORATIVE ELEMENTS ===== */
+.pixel-torch {
+  display: inline-block;
+  font-size: 20px;
+  animation: torchFlicker 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes torchFlicker {
+  from { filter: brightness(1) drop-shadow(0 0 4px orange); }
+  to { filter: brightness(1.3) drop-shadow(0 0 8px #ffaa00); }
+}
+
+.pixel-star {
+  display: inline-block;
+  animation: starTwinkle 2s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* ===== HP/MANA BAR DECORATION ===== */
+.player-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 30px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 24px;
+}
+
+.bar-track {
+  flex: 1;
+  height: 14px;
+  background: #1a0a0a;
+  border: 3px solid #5a2020;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar-track.mana { background: #0a0a2a; border-color: #202060; }
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c02020, var(--hp-color));
+  animation: barPulse 2s ease-in-out infinite;
+  position: relative;
+}
+
+.bar-fill.mana { background: linear-gradient(90deg, #2020c0, var(--mana-color)); }
+
+@keyframes barPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+
+.bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 0; right: 0;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+}
+
+.bar-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* ===== FLOATING PARTICLES ===== */
+.particles-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--gold);
+  animation: particleFall linear infinite;
+  opacity: 0;
+}
+
+@keyframes particleFall {
+  0% { transform: translateY(-10px); opacity: 0.8; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* ===== NOTIFICATION ===== */
+#notif {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 999;
+  background: rgba(10,15,35,0.97);
+  border: 3px solid var(--gold);
+  padding: 12px 16px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--gold);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.6);
+  max-width: 280px;
+  transform: translateX(120%);
+  transition: transform 0.3s;
+  line-height: 1.8;
+}
+
+#notif.show { transform: translateX(0); }
+
+/* ===== ACHIEVEMENTS ===== */
+#achievements { background: linear-gradient(180deg, #050a14 0%, #020408 100%); }
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.ach-card {
+  background: rgba(5,10,25,0.97);
+  border: 3px solid var(--stone);
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  transition: all 0.15s;
+}
+
+.ach-card:hover {
+  border-color: var(--gold);
+  transform: translate(-2px,-2px);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+}
+
+.ach-card.locked { opacity: 0.5; filter: grayscale(1); }
+
+.ach-icon { font-size: 28px; flex-shrink: 0; }
+
+.ach-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--gold);
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.ach-desc {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ===== MOD SECTION ===== */
+#mods { background: linear-gradient(180deg, #020408 0%, #04080c 100%); }
+
+.mods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.mod-card {
+  background: rgba(4,8,20,0.98);
+  border: 4px solid var(--corruption);
+  padding: 20px;
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.6);
+  transition: all 0.15s;
+}
+
+.mod-card:hover {
+  border-color: #c080ff;
+  transform: translate(-2px,-2px);
+  box-shadow: 7px 7px 0 rgba(0,0,0,0.6);
+}
+
+.mod-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #c080ff;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.mod-type {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  padding: 3px 8px;
+  border: 2px solid var(--corruption);
+  display: inline-block;
+}
+
+.mod-desc {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.mod-downloads {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--grass-bright);
+  margin-top: 8px;
+}
+
+/* ===== CREDITS SECTION ===== */
+#credits {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  background: #02020a;
+  min-height: 100vh;
+}
+
+#credits-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.credits-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 80px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+}
+
+/* ---- Title ---- */
+.credits-title-wrap {
+  text-align: center;
+  position: relative;
+  padding: 30px 0 10px;
+}
+
+.credits-title-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(ellipse at center, rgba(245,197,24,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  animation: credGlow 3s ease-in-out infinite;
+}
+
+@keyframes credGlow {
+  0%,100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.credits-big-title {
+  font-size: clamp(14px, 2.8vw, 22px);
+  color: var(--text-main);
+  text-shadow: 2px 2px 0 #000;
+  line-height: 1.8;
+  letter-spacing: 2px;
+  animation: fadeSlideUp 1s ease both;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.credits-name-wrap {
+  position: relative;
+  display: inline-block;
+  margin-top: 18px;
+}
+
+.credits-name-bg {
+  position: absolute;
+  inset: -8px -16px;
+  background: linear-gradient(135deg, rgba(245,197,24,0.15), rgba(245,197,24,0.05));
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 40px rgba(245,197,24,0.3), 0 0 80px rgba(245,197,24,0.15), inset 0 0 30px rgba(245,197,24,0.05);
+  animation: nameBgPulse 2s ease-in-out infinite;
+}
+
+@keyframes nameBgPulse {
+  0%,100% { box-shadow: 0 0 40px rgba(245,197,24,0.3), 0 0 80px rgba(245,197,24,0.15); }
+  50%      { box-shadow: 0 0 60px rgba(245,197,24,0.5), 0 0 120px rgba(245,197,24,0.25); }
+}
+
+.credits-player-name {
+  font-size: clamp(28px, 6vw, 56px);
+  color: var(--gold);
+  text-shadow:
+    4px 4px 0 #7a4400,
+    8px 8px 0 rgba(0,0,0,0.6),
+    0 0 60px rgba(245,197,24,0.6);
+  letter-spacing: 6px;
+  display: block;
+  animation: nameFlash 0.8s ease both 0.3s, nameFloat 4s ease-in-out infinite 1.2s;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes nameFlash {
+  0%   { opacity: 0; transform: scale(0.5); filter: blur(10px); }
+  60%  { opacity: 1; transform: scale(1.08); filter: blur(0); }
+  100% { transform: scale(1); }
+}
+
+@keyframes nameFloat {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-6px); }
+}
+
+.credits-name-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* ---- Player Card ---- */
+.credits-player-card {
+  width: 100%;
+  max-width: 640px;
+  background: rgba(8,10,25,0.95);
+  border: 4px solid var(--gold);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.7), 0 0 60px rgba(245,197,24,0.1), inset 0 0 40px rgba(245,197,24,0.03);
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  animation: cardSlideIn 0.8s cubic-bezier(0.22,1,0.36,1) both 0.6s;
+}
+
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateX(-60px) rotateY(-10deg); }
+  to   { opacity: 1; transform: translateX(0) rotateY(0); }
+}
+
+.credits-player-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), #fff, var(--gold), transparent);
+  animation: shimmerLine 2s linear infinite;
+}
+
+@keyframes shimmerLine {
+  from { background-position: -200% center; }
+  to   { background-position: 200% center; }
+}
+
+.credits-player-card::after {
+  content: 'PLAYER';
+  position: absolute;
+  top: 10px; right: 14px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: rgba(245,197,24,0.3);
+  letter-spacing: 2px;
+}
+
+.cred-char-wrap {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+#char-canvas {
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 8px rgba(245,197,24,0.4));
+}
+
+.cred-char-shadow {
+  width: 60px;
+  height: 8px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.6), transparent);
+  border-radius: 50%;
+}
+
+.cred-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cred-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding-bottom: 6px;
+}
+
+.cred-label {
+  font-size: 6px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.cred-value {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.cred-online {
+  color: var(--grass-bright);
+  animation: onlinePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes onlinePulse {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0.5; }
+}
+
+.cred-bars { margin-top: 6px; display: flex; flex-direction: column; gap: 8px; }
+
+.cred-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cred-bar-lbl {
+  font-size: 5.5px;
+  color: var(--text-muted);
+  min-width: 80px;
+  letter-spacing: 0.5px;
+}
+
+.cred-bar-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+
+.cred-bar-fill {
+  height: 100%;
+  transition: width 1.5s cubic-bezier(0.22,1,0.36,1);
+  position: relative;
+}
+
+.cred-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 1px; left: 0; right: 0;
+  height: 2px;
+  background: rgba(255,255,255,0.3);
+}
+
+.cred-bar-pct {
+  font-size: 6px;
+  color: var(--text-muted);
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ---- Friend Box ---- */
+.credits-friend-box {
+  width: 100%;
+  max-width: 640px;
+  background: rgba(5,10,25,0.97);
+  border: 4px solid var(--hallow);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.7), 0 0 50px rgba(232,67,147,0.1);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  animation: cardSlideIn 0.8s cubic-bezier(0.22,1,0.36,1) both 0.9s;
+}
+
+.friend-box-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top left, rgba(232,67,147,0.08), transparent 60%);
+  pointer-events: none;
+}
+
+.friend-icon-row {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.friend-icon-big {
+  font-size: 40px;
+  animation: iconBounce 1.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes iconBounce {
+  0%,100% { transform: translateY(0) rotate(-5deg); }
+  50%     { transform: translateY(-8px) rotate(5deg); }
+}
+
+.friend-title {
+  font-size: 14px;
+  color: var(--hallow);
+  text-shadow: 2px 2px 0 #7a0040, 0 0 20px rgba(232,67,147,0.4);
+  text-align: center;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+  animation: friendTitlePulse 2s ease-in-out infinite;
+}
+
+@keyframes friendTitlePulse {
+  0%,100% { text-shadow: 2px 2px 0 #7a0040, 0 0 20px rgba(232,67,147,0.4); }
+  50%     { text-shadow: 2px 2px 0 #7a0040, 0 0 40px rgba(232,67,147,0.7); }
+}
+
+.friend-text {
+  font-size: 20px;
+  color: var(--text-main);
+  line-height: 1.7;
+  text-align: center;
+}
+
+.friend-btn-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.friend-btn {
+  font-size: 9px;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, #1a0020, #0d0010);
+  border: 3px solid var(--hallow);
+  color: var(--hallow);
+  cursor: pointer;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  animation: friendBtnPulse 2s ease-in-out infinite;
+  letter-spacing: 1px;
+  transition: all 0.1s;
+}
+
+.friend-btn:hover {
+  background: var(--hallow);
+  color: #fff;
+  transform: translate(-2px,-2px);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.5);
+}
+
+@keyframes friendBtnPulse {
+  0%,100% { box-shadow: 4px 4px 0 rgba(0,0,0,0.5), 0 0 0 rgba(232,67,147,0); }
+  50%     { box-shadow: 4px 4px 0 rgba(0,0,0,0.5), 0 0 16px rgba(232,67,147,0.4); }
+}
+
+.friend-tag {
+  font-size: 9px;
+  padding: 12px 20px;
+  background: rgba(245,197,24,0.1);
+  border: 3px solid var(--gold);
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+
+/* ---- Rolling Credits ---- */
+.rolling-credits-wrap {
+  width: 100%;
+  max-width: 640px;
+  position: relative;
+}
+
+.rolling-credits-title {
+  font-size: 10px;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 0 #7a4400;
+}
+
+.rolling-credits {
+  background: rgba(4,6,16,0.97);
+  border: 4px solid var(--panel-border);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.7);
+  max-height: 420px;
+  overflow: hidden;
+  position: relative;
+}
+
+.rolling-credits::before,
+.rolling-credits::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 60px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.rolling-credits::before { top: 0; background: linear-gradient(to bottom, rgba(4,6,16,1), transparent); }
+.rolling-credits::after  { bottom: 0; background: linear-gradient(to top, rgba(4,6,16,1), transparent); }
+
+.rolling-credits-inner {
+  animation: rollUp 30s linear infinite;
+  padding: 60px 24px;
+}
+
+@keyframes rollUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(-100%); }
+}
+
+.rc-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.rc-role {
+  font-size: 7px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.rc-name {
+  font-size: 22px;
+  color: var(--text-main);
+}
+
+.rc-divider {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--gold);
+  text-align: center;
+  padding: 20px 0 4px;
+  text-shadow: 0 0 10px rgba(245,197,24,0.4);
+}
+
+.big-credit .rc-name.big-name {
+  font-size: 36px;
+  color: var(--gold);
+  text-shadow: 2px 2px 0 #7a4400, 0 0 20px rgba(245,197,24,0.5);
+}
+
+.rc-final {
+  font-size: clamp(10px, 2vw, 14px);
+  color: var(--gold);
+  text-align: center;
+  padding: 24px 0 8px;
+  text-shadow: 3px 3px 0 #7a4400, 0 0 30px rgba(245,197,24,0.5);
+  letter-spacing: 2px;
+  line-height: 1.8;
+}
+
+.rc-tagline {
+  font-size: 24px;
+  color: var(--grass-bright);
+  text-align: center;
+  text-shadow: 2px 2px 0 #000;
+}
+
+/* ---- Stamp ---- */
+.credits-stamp {
+  border: 5px solid var(--gold);
+  padding: 16px 28px;
+  text-align: center;
+  position: relative;
+  transform: rotate(-3deg);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.6);
+  animation: stampIn 0.6s cubic-bezier(0.22,1,0.36,1) both 1.5s;
+  background: rgba(10,8,2,0.95);
+}
+
+@keyframes stampIn {
+  from { opacity: 0; transform: rotate(-3deg) scale(2); }
+  to   { opacity: 1; transform: rotate(-3deg) scale(1); }
+}
+
+.stamp-inner {
+  font-size: clamp(10px, 2vw, 14px);
+  color: var(--gold);
+  text-shadow: 2px 2px 0 #7a4400;
+  letter-spacing: 4px;
+  line-height: 1.8;
+}
+
+.stamp-year {
+  font-size: 20px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ---- Extra cool animation overrides ---- */
+.timeline-item { animation: none; }
+
+/* Section entrance animations */
+@keyframes sectionReveal {
+  from { opacity: 0; transform: translateY(50px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  animation: sectionReveal 0.7s ease both;
+}
+
+/* Hover shimmer on pixel panels */
+.pixel-panel:hover::before {
+  animation: shimmerSweep 0.8s ease forwards;
+}
+
+@keyframes shimmerSweep {
+  from { left: -100%; }
+  to   { left: 200%; }
+}
+
+/* Card lift effect */
+.figure-card:hover, .boss-card:hover, .yt-card:hover, .update-card:hover, .mod-card:hover {
+  animation: cardLift 0.15s ease forwards;
+}
+
+@keyframes cardLift {
+  to { transform: translate(-4px,-4px) scale(1.01); }
+}
+
+/* Rolling credits auto-scroll using JS */
+.rolling-credits { overflow: hidden; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .timeline::before { left: 20px; }
+  .timeline-item { flex-direction: column !important; padding-left: 50px; }
+  .timeline-item .tl-content { max-width: 100%; text-align: left !important; }
+  .timeline-dot { position: absolute; left: 6px; }
+  .lore-content { grid-template-columns: 1fr; }
+  nav { height: auto; padding: 8px 12px; flex-wrap: wrap; gap: 6px; }
+  .nav-links { gap: 2px; }
+  .nav-links li a { font-size: 6px; padding: 4px 6px; }
+  .minigames-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== SPECIAL DECORATIONS ===== */
+.ore-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+  justify-content: center;
+}
+
+.ore-block {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 3px solid;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  image-rendering: pixelated;
+  animation: oreGlow 3s ease-in-out infinite;
+}
+
+.ore-copper { border-color: var(--copper); background: rgba(50,20,5,0.9); animation-delay: 0s; }
+.ore-iron { border-color: #b0907a; background: rgba(40,30,20,0.9); animation-delay: 0.3s; }
+.ore-silver { border-color: var(--silver); background: rgba(30,35,40,0.9); animation-delay: 0.6s; }
+.ore-gold { border-color: var(--gold); background: rgba(50,40,0,0.9); animation-delay: 0.9s; }
+.ore-demonite { border-color: var(--corruption); background: rgba(25,5,45,0.9); animation-delay: 1.2s; }
+.ore-crimtane { border-color: var(--crimson); background: rgba(40,5,5,0.9); animation-delay: 1.5s; }
+.ore-hellstone { border-color: var(--lava); background: rgba(40,10,0,0.9); animation-delay: 1.8s; }
+.ore-adamantite { border-color: #ff5080; background: rgba(40,5,15,0.9); animation-delay: 2.1s; }
+.ore-mythril { border-color: #40d0a0; background: rgba(5,30,20,0.9); animation-delay: 2.4s; }
+.ore-hallowed { border-color: var(--hallow); background: rgba(40,5,20,0.9); animation-delay: 2.7s; }
+.ore-chloro { border-color: #80ff80; background: rgba(5,30,5,0.9); animation-delay: 3.0s; }
+.ore-luminite { border-color: #c0d0ff; background: rgba(10,10,40,0.9); animation-delay: 3.3s; }
+
+@keyframes oreGlow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.4) saturate(1.3); }
+}
+
+/* ===== TOOLTIP ===== */
+.has-tooltip { position: relative; cursor: help; }
+.tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(5,5,20,0.98);
+  border: 3px solid var(--gold);
+  padding: 8px 12px;
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--text-main);
+  white-space: nowrap;
+  z-index: 100;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.6);
+  pointer-events: none;
+}
+.has-tooltip:hover .tooltip { display: block; }
+
+/* ===== EXTRA: WEAPONS TABLE ===== */
+#weapons { background: linear-gradient(180deg, #04080c 0%, #050a14 100%); }
+
+.weapons-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+
+.weapons-table th {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--gold);
+  padding: 10px 14px;
+  text-align: left;
+  background: rgba(20,15,5,0.9);
+  border-bottom: 3px solid var(--gold);
+}
+
+.weapons-table td {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  color: var(--text-main);
+  padding: 10px 14px;
+  background: rgba(8,12,25,0.95);
+  border-top: 2px solid var(--stone-dark);
+  border-bottom: 2px solid var(--stone-dark);
+}
+
+.weapons-table td:first-child { border-left: 3px solid var(--panel-border); }
+.weapons-table td:last-child { border-right: 3px solid var(--panel-border); }
+
+.weapons-table tr:hover td {
+  background: rgba(15,20,40,0.95);
+  border-color: var(--gold);
+}
+
+.dmg-val { color: var(--crimson); font-weight: bold; }
+.tier-melee { color: var(--crimson); }
+.tier-ranged { color: var(--grass-bright); }
+.tier-magic { color: #a060ff; }
+.tier-summon { color: var(--hallow); }
+
+/* ===== PIXEL TERRAIN DECORATIONS ===== */
+.terrain-strip {
+  width: 100%;
+  height: 32px;
+  background:
+    repeating-linear-gradient(90deg, var(--grass) 0 16px, #2d7426 16px 32px) 0 0/32px 12px,
+    repeating-linear-gradient(90deg, var(--dirt) 0 16px, var(--dirt-dark) 16px 32px) 0 12px/32px 20px;
+  border-top: 4px solid var(--grass-bright);
+  border-bottom: 4px solid var(--dirt-dark);
+}
+
+/* ===== TABS ===== */
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: -4px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 8px 12px;
+  background: rgba(10,15,30,0.9);
+  border: 3px solid var(--stone-dark);
+  border-bottom: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.tab-btn.active, .tab-btn:hover {
+  background: rgba(20,30,60,0.95);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.tab-content {
+  display: none;
+  background: rgba(8,12,30,0.95);
+  border: 3px solid var(--gold);
+  padding: 20px;
+}
+
+.tab-content.active { display: block; }
+
+</style>
+</head>
+<body>
+
+<!-- FLOATING PARTICLES -->
+<div class="particles-container" id="particles"></div>
+
+<!-- NOTIFICATION -->
+<div id="notif">🏆 Achievement Unlocked!<br/>You visited Terraria World!</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⚔ TERRARIA</div>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#history">History</a></li>
+    <li><a href="#figures">Team</a></li>
+    <li><a href="#youtubers">Content</a></li>
+    <li><a href="#lore">Lore</a></li>
+    <li><a href="#bosses">Bosses</a></li>
+    <li><a href="#biomes">Biomes</a></li>
+    <li><a href="#updates">Updates</a></li>
+    <li><a href="#weapons">Weapons</a></li>
+    <li><a href="#mods">Mods</a></li>
+    <li><a href="#minigames">Mini Games</a></li>
+    <li><a href="#achievements">Trophies</a></li>
+    <li><a href="#credits" style="color:var(--hallow)">Credits</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-title">TERRARIA<br/>WORLD</div>
+    <div class="hero-subtitle">THE ULTIMATE FAN ENCYCLOPEDIA</div>
+    <div class="hero-tagline">⚔ Dig. Fight. Explore. Build. ⚔</div>
+
+    <div class="player-bars" style="max-width:400px;margin:20px auto 0;">
+      <div class="bar-row">
+        <span class="bar-icon">❤</span>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:87%"></div>
+        </div>
+        <span class="bar-text">500/500</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-icon">⭐</span>
+        <div class="bar-track mana">
+          <div class="bar-fill mana" style="width:72%"></div>
+        </div>
+        <span class="bar-text">200/200</span>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-val">64M+</span>
+        <span class="stat-lbl">Copies Sold</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-val">2011</span>
+        <span class="stat-lbl">Released</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-val">97%</span>
+        <span class="stat-lbl">Positive on Steam</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-val">1.4.5</span>
+        <span class="stat-lbl">Latest Version</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">SCROLL DOWN</div>
+</section>
+
+<div class="ground-divider"></div>
+
+<!-- HISTORY -->
+<section id="history">
+  <div class="section-inner">
+    <h2 class="section-title">📖 THE HISTORY OF TERRARIA</h2>
+    <div class="section-divider"><span>⛏</span></div>
+
+    <div class="ore-row">
+      <div class="ore-block ore-copper has-tooltip">🟫<div class="tooltip">Copper Ore — The beginning</div></div>
+      <div class="ore-block ore-iron has-tooltip">⬛<div class="tooltip">Iron Ore — Building the foundation</div></div>
+      <div class="ore-block ore-silver has-tooltip">⬜<div class="tooltip">Silver Ore — Growing community</div></div>
+      <div class="ore-block ore-gold has-tooltip">🟡<div class="tooltip">Gold Ore — Version 1.2 glory</div></div>
+      <div class="ore-block ore-demonite has-tooltip">🟣<div class="tooltip">Demonite — Corruption update</div></div>
+      <div class="ore-block ore-crimtane has-tooltip">🔴<div class="tooltip">Crimtane — Crimson Biome added</div></div>
+      <div class="ore-block ore-hellstone has-tooltip">🔶<div class="tooltip">Hellstone — Hardmode fire</div></div>
+      <div class="ore-block ore-adamantite has-tooltip">🩷<div class="tooltip">Adamantite — Harder than ever</div></div>
+      <div class="ore-block ore-mythril has-tooltip">💚<div class="tooltip">Mythril — Console launch</div></div>
+      <div class="ore-block ore-hallowed has-tooltip">🌸<div class="tooltip">Hallowed Ore — The Hallow</div></div>
+      <div class="ore-block ore-chloro has-tooltip">🟢<div class="tooltip">Chlorophyte — Jungle depths</div></div>
+      <div class="ore-block ore-luminite has-tooltip">💠<div class="tooltip">Luminite — Journey's End</div></div>
+    </div>
+
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="tl-content">
+          <div class="tl-year">JANUARY 2011</div>
+          <div class="tl-title">THE SPARK OF CREATION</div>
+          <div class="tl-desc">Andrew "Redigit" Spinks, a programmer from Indiana, begins developing a 2D sandbox game from his living room. Inspired by Minecraft and his own previous work on the fan-game Super Mario Bros. X, he sets out to create something entirely new. A small remote team helps with art and testing.</div>
+        </div>
+        <div class="timeline-dot"></div>
+        <div class="tl-content"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content"></div>
+        <div class="timeline-dot" style="background:var(--grass-bright)"></div>
+        <div class="tl-content">
+          <div class="tl-year">MAY 16, 2011</div>
+          <div class="tl-title">TERRARIA LAUNCHES ON STEAM</div>
+          <div class="tl-desc">Terraria releases on Steam for Windows — earlier than planned after a beta build was leaked online. The game sells over 50,000 copies on day one and 432,000 in its first month alone. Minecraft creator Markus "Notch" Persson tweets about the game, giving it a massive early boost.</div>
+          <div style="margin-top:10px"><span class="update-badge gold">v1.0</span><span class="update-badge ocean">STEAM LAUNCH</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content">
+          <div class="tl-year">FEBRUARY 2012</div>
+          <div class="tl-title">DEVELOPMENT PAUSES</div>
+          <div class="tl-desc">Redigit announces Terraria will receive no further content updates so he can focus on his family. Fans are disappointed, but a final bug-fix patch is released. The game continues selling strongly on Steam despite the halt in active development.</div>
+        </div>
+        <div class="timeline-dot" style="background:var(--stone)"></div>
+        <div class="tl-content"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content"></div>
+        <div class="timeline-dot" style="background:var(--corruption)"></div>
+        <div class="tl-content">
+          <div class="tl-year">OCTOBER 2013</div>
+          <div class="tl-title">THE GREAT RETURN — VERSION 1.2</div>
+          <div class="tl-desc">After a community outcry and fan support, Redigit returns to Terraria development. Version 1.2 launches with an enormous amount of new content — new biomes, the Crimson, hundreds of new items, NPCs, and enemies. This is widely considered the update that transformed Terraria from a good game into a legendary one. Terraria 2 is also hinted at.</div>
+          <div style="margin-top:10px"><span class="update-badge">v1.2</span><span class="update-badge crimson">CRIMSON BIOME</span><span class="update-badge">HUNDREDS OF ITEMS</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content">
+          <div class="tl-year">2013–2014</div>
+          <div class="tl-title">CONSOLE & MOBILE EXPANSION</div>
+          <div class="tl-desc">Re-Logic partners with Engine Software and 505 Games to bring Terraria to Xbox 360, PlayStation 3, and PS Vita. Mobile versions arrive for iOS and Android via Codeglue. PS4 and Xbox One versions come in 2014. Terraria becomes truly multiplatform. The Japanese console version features exclusive anime crossover content by Spike Chunsoft.</div>
+          <div style="margin-top:10px"><span class="update-badge ocean">XBOX 360</span><span class="update-badge ocean">PS3</span><span class="update-badge ocean">VITA</span><span class="update-badge jungle">MOBILE</span></div>
+        </div>
+        <div class="timeline-dot" style="background:var(--ocean)"></div>
+        <div class="tl-content"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content"></div>
+        <div class="timeline-dot" style="background:var(--jungle)"></div>
+        <div class="tl-content">
+          <div class="tl-year">JUNE 2015</div>
+          <div class="tl-title">VERSION 1.3 — HARDMODE REBORN</div>
+          <div class="tl-desc">Version 1.3 launches and adds an Expert Mode that dramatically increases the game's challenge, the Lunar Events, the Moon Lord final boss, the Celestial Pillars, and a new endgame tier of gear. tModLoader begins gaining traction, allowing modders to build massive content expansions. The Terraria community explodes with activity.</div>
+          <div style="margin-top:10px"><span class="update-badge">v1.3</span><span class="update-badge crimson">MOON LORD</span><span class="update-badge">EXPERT MODE</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content">
+          <div class="tl-year">2018–2019</div>
+          <div class="tl-title">TERRARIA: OTHERWORLD CANCELED</div>
+          <div class="tl-desc">Terraria: Otherworld, a spin-off featuring tower defense and RPG elements, had been in development since February 2015. After working with Engine Software and then Pipeworks Studios, Re-Logic announces the project is canceled on April 12, 2018, as it didn't meet their quality standards. Resources return to the main game.</div>
+        </div>
+        <div class="timeline-dot" style="background:var(--stone-dark)"></div>
+        <div class="tl-content"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content"></div>
+        <div class="timeline-dot" style="background:var(--gold)"></div>
+        <div class="tl-content">
+          <div class="tl-year">MAY 16, 2020</div>
+          <div class="tl-title">JOURNEY'S END — VERSION 1.4</div>
+          <div class="tl-desc">Terraria's "final update" — released exactly 9 years after the game's original launch — is a monumental content drop. Journey Mode, Master Mode, Golf mini-game, hundreds of new items, bestiary, shimmer liquid, and much more. tModLoader receives official Steam support. Despite being announced as the last update, Re-Logic continues developing the game due to overwhelming demand.</div>
+          <div style="margin-top:10px"><span class="update-badge gold">v1.4</span><span class="update-badge gold">JOURNEY'S END</span><span class="update-badge jungle">TMODLOADER OFFICIAL</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content">
+          <div class="tl-year">2021</div>
+          <div class="tl-title">THE GOOGLE STADIA SAGA</div>
+          <div class="tl-desc">Redigit's Google account is suspended without explanation, causing Re-Logic to cancel the Stadia port in protest. The story goes viral across gaming media. Google eventually apologizes and restores the account, and Re-Logic follows through with the Stadia release in March 2021 — honoring their commitment to players even after the drama.</div>
+        </div>
+        <div class="timeline-dot" style="background:#ff4444"></div>
+        <div class="tl-content"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content"></div>
+        <div class="timeline-dot" style="background:var(--hallow)"></div>
+        <div class="tl-content">
+          <div class="tl-year">2023–2025</div>
+          <div class="tl-title">STILL GROWING — VERSION 1.4.5</div>
+          <div class="tl-desc">Re-Logic speaks out against Unity's controversial runtime fee policy in 2023, donating $100,000 to open-source alternatives Godot and FNA. Terraria crosses 64 million total copies sold by May 2025 — one of the best-selling games in history. The Calamity mod's soundtrack ranks 9th on Opera GX's all-time list. Re-Logic hires a Minecraft modder specifically to work on tModLoader.</div>
+          <div style="margin-top:10px"><span class="update-badge">v1.4.5</span><span class="update-badge gold">64M COPIES</span><span class="update-badge jungle">ANTI-UNITY</span></div>
+        </div>
+      </div>
+
+    </div><!-- end timeline -->
+  </div>
+</section>
+
+<div class="terrain-strip"></div>
+
+<!-- PROMINENT FIGURES -->
+<section id="figures">
+  <div class="section-inner">
+    <h2 class="section-title">👑 THE CREATORS & TEAM</h2>
+    <div class="section-divider"><span>🏗</span></div>
+
+    <div class="figures-grid">
+
+      <div class="figure-card">
+        <div style="font-size:48px;margin-bottom:12px">⛏</div>
+        <div class="figure-name">ANDREW SPINKS</div>
+        <div class="figure-alias">"Redigit" / Re-Logic President</div>
+        <div class="figure-role">FOUNDER & LEAD DEVELOPER</div>
+        <div class="figure-desc">The genius behind Terraria. Working from his living room in Indiana, Redigit created the game almost single-handedly from January to May 2011. A former Nintendo fan-game developer (SMBX), he built Terraria using Microsoft's XNA framework. Known for his passion for the community and his "final update" meme-worthy announcements. His battles with Google over a suspended account made international gaming news.</div>
+      </div>
+
+      <div class="figure-card">
+        <div style="font-size:48px;margin-bottom:12px">🎨</div>
+        <div class="figure-name">WHITNEY SPINKS</div>
+        <div class="figure-alias">"Cenx" — Vice President</div>
+        <div class="figure-role">VICE PRESIDENT & GAME DESIGNER</div>
+        <div class="figure-desc">Wife of Redigit and essential creative force at Re-Logic. Whitney "Cenx" Spinks serves as Vice President and Game Designer, contributing significantly to Terraria's design direction and creative vision. She's been outspoken on matters of company ethics, including the statement that Re-Logic would never sell out to the Epic Games Store exclusivity deals.</div>
+      </div>
+
+      <div class="figure-card">
+        <div style="font-size:48px;margin-bottom:12px">🖌</div>
+        <div class="figure-name">FINN BRICE</div>
+        <div class="figure-alias">"Tiyuri" — Original Sprite Artist</div>
+        <div class="figure-role">CO-FOUNDER (EARLY TEAM)</div>
+        <div class="figure-desc">The original sprite artist of Terraria, Finn "Tiy" Brice was commissioned to handle the game's early graphics design. He departed the team in early 2012. After Terraria, he went on to found Chucklefish Games — the studio behind beloved indie titles like Starbound, Wargroove, and the publisher of Stardew Valley. A true indie legend.</div>
+      </div>
+
+      <div class="figure-card">
+        <div style="font-size:48px;margin-bottom:12px">🎵</div>
+        <div class="figure-name">SCOTT LLOYD SHELLY</div>
+        <div class="figure-alias">"Resonance Array"</div>
+        <div class="figure-role">ORIGINAL COMPOSER</div>
+        <div class="figure-desc">Scott Lloyd Shelly composed the haunting, atmospheric soundtrack for the original Terraria — tracks like "Overworld Day," "Boss 1," and "Underground" became iconic. The music set a tone that perfectly matched Terraria's blend of wonder and danger. His work is now part of gaming music history, even inspiring the massive Calamity mod soundtrack which outranked the original in community polls.</div>
+      </div>
+
+      <div class="figure-card">
+        <div style="font-size:48px;margin-bottom:12px">💻</div>
+        <div class="figure-name">YORAI OMER</div>
+        <div class="figure-alias">"Yoraiz0r" — Lead Developer</div>
+        <div class="figure-role">PROGRAMMER (SINCE v1.2.3)</div>
+        <div class="figure-desc">Hired alongside Solsund on January 6, 2014, Yoraiz0r became one of Terraria's Lead Developers. Previously a well-known modder on the official Terraria Online forums, he brought deep community knowledge and technical expertise to the team. He was instrumental in the massive 1.3 and 1.4 updates.</div>
+      </div>
+
+      <div class="figure-card">
+        <div style="font-size:48px;margin-bottom:12px">📢</div>
+        <div class="figure-name">TED MURPHY</div>
+        <div class="figure-alias">"Loki" — Head of Marketing</div>
+        <div class="figure-role">HEAD OF BUSINESS STRATEGY</div>
+        <div class="figure-desc">Ted "Loki" Murphy was originally hired as Re-Logic's Community Manager during development of update 1.3. Previously a moderator on Terraria Online, he brought community-management skills to an official role. He is now the Head of Business Strategy & Marketing, known for his community-friendly communication style and detailed dev posts.</div>
+      </div>
+
+      <div class="figure-card">
+        <div style="font-size:48px;margin-bottom:12px">🎮</div>
+        <div class="figure-name">VICTOR MOURA</div>
+        <div class="figure-alias">"Crowno" — Lead Artist</div>
+        <div class="figure-role">LEAD ARTIST & SPRITE DESIGNER</div>
+        <div class="figure-desc">Victor "Crowno" Moura serves as Terraria's primary sprite artist and Lead Artist at Re-Logic. His pixel art brought the game's iconic look to life — from the whimsical NPCs to terrifying bosses. His detailed sprite work on post-1.2 Terraria helped define the game's visual identity that millions recognize today.</div>
+      </div>
+
+      <div class="figure-card">
+        <div style="font-size:48px;margin-bottom:12px">🏃</div>
+        <div class="figure-name">AMANDA POWELL</div>
+        <div class="figure-alias">"Safeman" — Community Manager</div>
+        <div class="figure-role">COMMUNITY MANAGER</div>
+        <div class="figure-desc">Amanda "Safeman" Powell is Terraria's Community Manager and admin, handling communications and player relations. Taking over from Loki in November 2015, she has been the friendly face of Re-Logic's forums and social media presence. Her warm, engaged management style helped maintain one of gaming's most loyal fanbases through multiple "final update" cycles.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="terrain-strip"></div>
+
+<!-- YOUTUBERS & STREAMERS -->
+<section id="youtubers">
+  <div class="section-inner">
+    <h2 class="section-title">🎬 LEGENDARY CONTENT CREATORS</h2>
+    <div class="section-divider"><span>📺</span></div>
+
+    <div class="pixel-panel" style="margin-bottom:30px">
+      <div style="font-family:'VT323',monospace;font-size:20px;color:var(--text-main);line-height:1.6">
+        Terraria's community of content creators has been a massive driver of the game's 64 million+ sales. These YouTubers and streamers have introduced countless players to the world of Terraria, taught veteran players advanced mechanics, and kept the community alive during long gaps between updates. Below are the legends of Terraria content creation.
+      </div>
+    </div>
+
+    <div class="youtubers-grid">
+
+      <div class="yt-card">
+        <div class="yt-icon">🎮</div>
+        <div class="yt-name">CHIPPYGAMING</div>
+        <div class="yt-subs">📊 600K+ Subscribers</div>
+        <div class="yt-desc">One of the most well-known Terraria YouTubers. James "ChippyGaming" Bennett covers news, updates, challenge runs, and adventures. Famous for his energetic commentary and deep game knowledge. A go-to source whenever a new Terraria update drops.</div>
+        <div style="margin-top:8px"><span class="yt-tag">News</span><span class="yt-tag">Challenges</span><span class="yt-tag">Adventures</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🌟</div>
+        <div class="yt-name">HAPPYDAYS</div>
+        <div class="yt-subs">📊 550K+ Subscribers</div>
+        <div class="yt-desc">HappyDays became famous for his terrific bad luck and hilarious reactions. His Let's Play series introduced a huge audience to Terraria. Known for cooperative multiplayer with his friend group and consistently entertaining failures that somehow still turn into victories.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Let's Play</span><span class="yt-tag">Multiplayer</span><span class="yt-tag">Comedy</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">⚔</div>
+        <div class="yt-name">YRIMIR</div>
+        <div class="yt-subs">📊 200K+ Subscribers</div>
+        <div class="yt-desc">Widely considered the most mechanically skilled Terraria player to ever make YouTube content. Yrimir's no-damage boss fights and speedruns set the community standard for skill. Though he stopped uploading due to health issues, his videos remain benchmarks for Terraria mastery that players still reference today.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Speedrun</span><span class="yt-tag">No-Hit</span><span class="yt-tag">Legend</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🐧</div>
+        <div class="yt-name">PEDGUIN</div>
+        <div class="yt-subs">📊 300K+ Subscribers</div>
+        <div class="yt-desc">One of the original Terraria YouTubers, Pedguin was beloved for his chill streams and genuine reactions to the game. His content helped shape the early Terraria YouTube community. Famous for his laid-back humor and the ability to make even farming sessions entertaining.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Streams</span><span class="yt-tag">Let's Play</span><span class="yt-tag">OG Creator</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🐍</div>
+        <div class="yt-name">PYTHONGB</div>
+        <div class="yt-subs">📊 150K+ Subscribers</div>
+        <div class="yt-desc">PythonGB was a top-tier Terraria content creator known for a wide variety of videos including guides, playthroughs, and showcases. He was part of the "golden age" of Terraria YouTube alongside HappyDays and ChippyGaming. He helped produce educational content that made the game more accessible.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Guides</span><span class="yt-tag">Showcases</span><span class="yt-tag">Educational</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🦸</div>
+        <div class="yt-name">HERO</div>
+        <div class="yt-subs">📊 500K+ Subscribers</div>
+        <div class="yt-desc">HERO has one of the longest-running Terraria YouTube channels, producing in-depth guides, update showcases, and challenge videos. Known for his calm and professional style, HERO's tutorials have helped millions of players understand complex game mechanics and progression systems.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Guides</span><span class="yt-tag">Tutorial</span><span class="yt-tag">Deep Dives</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🌊</div>
+        <div class="yt-name">WAND OF SPARKING</div>
+        <div class="yt-subs">📊 400K+ Subscribers</div>
+        <div class="yt-desc">Wand of Sparking creates some of the most beloved Terraria content on YouTube, with detailed class guides, progression videos, and creative challenge runs. Known for extremely thorough research and well-produced videos. A fan favorite among players looking for both entertainment and education.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Class Guides</span><span class="yt-tag">Progression</span><span class="yt-tag">High Quality</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🎯</div>
+        <div class="yt-name">KHAIOS</div>
+        <div class="yt-subs">📊 200K+ Subscribers</div>
+        <div class="yt-desc">Khaios is the undisputed king of Terraria building and architecture. So talented that Re-Logic uses his builds in official trailers and promotional material. His artistic creations — from pixel art megaprojects to elaborately detailed bases — push the limits of what's possible in Terraria's 2D world.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Building</span><span class="yt-tag">Architecture</span><span class="yt-tag">Official Builder</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🔥</div>
+        <div class="yt-name">FURY FORGE</div>
+        <div class="yt-subs">📊 180K+ Subscribers</div>
+        <div class="yt-desc">Fury Forge is known for modded Terraria content, particularly the legendary Calamity mod series. His modded playthroughs introduced countless players to the world of Terraria's vast modding community. His "Modded Terraria S1" is considered essential viewing for anyone interested in Calamity.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Modded</span><span class="yt-tag">Calamity</span><span class="yt-tag">Long Series</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🗡</div>
+        <div class="yt-name">SASH_EX</div>
+        <div class="yt-subs">📊 50K+ Subscribers</div>
+        <div class="yt-desc">Sash_EX is considered by many hardcore players to be among the most technically skilled Terraria players alive. Known for no-hit runs, challenge playthroughs, and PvP mastery. The community debates between Sash_EX, Yrimir, and Blanc as the greatest mechanical Terraria player of all time.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Expert Player</span><span class="yt-tag">No-Hit</span><span class="yt-tag">PvP</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🧪</div>
+        <div class="yt-name">SORBET CAFE</div>
+        <div class="yt-subs">📊 100K+ Subscribers</div>
+        <div class="yt-desc">Sorbet Cafe creates some of the most in-depth analytical Terraria content on YouTube, including highly praised deep dives into mechanics like the Defense stat. Known for the community as a go-to source for game knowledge and strategic understanding of Terraria's complex systems.</div>
+        <div style="margin-top:8px"><span class="yt-tag">Analysis</span><span class="yt-tag">Mechanics</span><span class="yt-tag">Educational</span></div>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-icon">🌙</div>
+        <div class="yt-name">BAUM</div>
+        <div class="yt-subs">📊 100K+ Subscribers</div>
+        <div class="yt-desc">Baum (or Baumproductions) is a German Terraria YouTuber beloved by the international community. Despite not being a native English speaker, Baum's content is universally praised for its quality and authenticity. A fan favorite from the early days of Terraria YouTube.</div>
+        <div style="margin-top:8px"><span class="yt-tag">International</span><span class="yt-tag">Let's Play</span><span class="yt-tag">Community Favorite</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="ground-divider"></div>
+
+<!-- LORE -->
+<section id="lore">
+  <div class="section-inner">
+    <h2 class="section-title">📜 THE LORE OF TERRARIA</h2>
+    <div class="section-divider"><span>🌒</span></div>
+
+    <div class="pixel-panel" style="margin-bottom:30px;border-color:var(--gold)">
+      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--gold);margin-bottom:12px">THE OFFICIAL LORE — 8TH ANNIVERSARY RELEASE</div>
+      <div class="lore-text">On May 16, 2019 — Terraria's 8th anniversary — Re-Logic released official lore written on inked parchment images. While initially released without a clear story, this document connected the game's characters and gameplay elements into a coherent universe. The developers noted this is one possible interpretation, and players are encouraged to piece together their own stories.</div>
+    </div>
+
+    <div class="lore-content">
+      <div class="lore-block gold-block">
+        <div class="lore-block-title">⚖ THE DIVINE BALANCE</div>
+        <div class="lore-text">In the beginning, the Gods established a balance to guarantee fairness for all living creatures. This balance was of paramount importance. Eons have passed since the Gods began testing the complexities of life. Each world of Terraria is a sentient being that knows all that happens within it — its sole purpose being to ensure the desired balance is maintained, often violently. The worlds utilize defense mechanisms: the Hallow, Corruption, and Crimson.</div>
+      </div>
+      <div class="lore-block crimson-block">
+        <div class="lore-block-title">🦑 THE COMING OF CTHULHU</div>
+        <div class="lore-text">Your story begins with Cthulhu — a creature of immeasurable power and unknown origin — who arrived long ago with the sole purpose of raining destruction and having dominion over all sentient life. None could stand against Cthulhu. The very fabric of Terraria seemed on the precipice of doom. At last, the ancient race of Dryads arose to wage battle against this cosmic horror.</div>
+      </div>
+      <div class="lore-block hallow-block">
+        <div class="lore-block-title">🌿 THE DRYADS' SACRIFICE</div>
+        <div class="lore-text">The Dryads, with their unparalleled connection to the planet, were Terraria's last hope. They joined together to save all life from annihilation. The Dryads could not kill Cthulhu — but with their combined power, they crippled Cthulhu's ability to cause further damage by ripping out his eyes, part of his skeleton, and chunks of his brain. This forced Cthulhu to retreat to the dark side of the moon, where it dwells to this day.</div>
+      </div>
+      <div class="lore-block">
+        <div class="lore-block-title">🧟 THE CORRUPTION & CRIMSON</div>
+        <div class="lore-text">The Crimson is a single emergent living being connected directly to each world, sharing a hive mind, solely focused on restoring balance. The Corruption serves a similar purpose — but manifests differently, as a spreading darkness that consumes and transforms. Both are the world's immune system, reacting to the presence of too much good or evil — the eternal struggle that every player lives through.</div>
+      </div>
+      <div class="lore-block gold-block">
+        <div class="lore-block-title">⚔ THE GUIDE & THE PLAYER</div>
+        <div class="lore-text">The player character — the "Terrarian" — arrives in this world as a fresh adventurer. The Guide NPC, who spawns at the start, is the first friendly face and provides the clues needed to progress. Lore hints suggest the Guide has a deeper connection to the world than it first appears. His mysterious death at the Wall of Flesh's summoning is no coincidence — it's key to unlocking Hardmode.</div>
+      </div>
+      <div class="lore-block crimson-block">
+        <div class="lore-block-title">👁 THE WALL OF FLESH</div>
+        <div class="lore-text">Deep in the Underworld, the Wall of Flesh serves as the ultimate guardian of the pre-Hardmode world — a gate between two eras of power. Sacrificing the Guide NPC in a pool of lava summons this terrifying boss. Defeating it "awakens" the world's dormant mechanical evils and transforms it forever, corrupting previously safe areas and spawning entirely new challenges.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="terrain-strip"></div>
+
+<!-- BOSSES -->
+<section id="bosses">
+  <div class="section-inner">
+    <h2 class="section-title">💀 LEGENDARY BOSSES</h2>
+    <div class="section-divider"><span>👹</span></div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('prehm')">Pre-Hardmode</button>
+      <button class="tab-btn" onclick="switchTab('hm')">Hardmode</button>
+      <button class="tab-btn" onclick="switchTab('postgm')">Post-Golem</button>
+    </div>
+
+    <div id="tab-prehm" class="tab-content active">
+      <div class="bosses-grid">
+        <div class="boss-card">
+          <div class="boss-pixel">👁</div>
+          <div class="boss-name">KING SLIME</div>
+          <div class="boss-type">PRE-HARDMODE | OPTIONAL</div>
+          <div class="boss-desc">The first boss most players encounter. A massive royal blue slime that splits into smaller slimes as it takes damage. Drops the Ninja set vanity and the Slime Staff accessory.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 2,000</div><div class="hp-bar"><div class="hp-fill" style="width:30%"></div></div></div>
+        </div>
+        <div class="boss-card">
+          <div class="boss-pixel">👁</div>
+          <div class="boss-name">EYE OF CTHULHU</div>
+          <div class="boss-type">PRE-HARDMODE | FIRST BOSS</div>
+          <div class="boss-desc">One of the first bosses, summoned at night or by a Suspicious Looking Eye. Phase 1: charges with servants. Phase 2: transforms into a mouth and becomes far more aggressive. A cornerstone of early Terraria progression.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 2,800</div><div class="hp-bar"><div class="hp-fill" style="width:40%"></div></div></div>
+        </div>
+        <div class="boss-card">
+          <div class="boss-pixel">🕷</div>
+          <div class="boss-name">EATER OF WORLDS</div>
+          <div class="boss-type">PRE-HARDMODE | CORRUPTION</div>
+          <div class="boss-desc">A massive segmented worm boss found in Corruption worlds. Each segment has individual HP and splitting the worm creates two smaller worms. Defeating it provides Demonite Ore and Shadow Scales for crafting powerful pre-Hardmode gear.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 7,485</div><div class="hp-bar"><div class="hp-fill" style="width:55%"></div></div></div>
+        </div>
+        <div class="boss-card">
+          <div class="boss-pixel">🧠</div>
+          <div class="boss-name">BRAIN OF CTHULHU</div>
+          <div class="boss-type">PRE-HARDMODE | CRIMSON</div>
+          <div class="boss-desc">The Crimson world's alternative to the Eater of Worlds. A horrifying floating brain surrounded by Creepers. Phase 2 reveals the brain itself after all Creepers are destroyed, teleporting rapidly. Provides Crimtane Ore and Tissue Samples.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 2,000</div><div class="hp-bar"><div class="hp-fill" style="width:30%"></div></div></div>
+        </div>
+        <div class="boss-card">
+          <div class="boss-pixel">👧</div>
+          <div class="boss-name">QUEEN BEE</div>
+          <div class="boss-type">PRE-HARDMODE | JUNGLE</div>
+          <div class="boss-desc">The guardian of the Underground Jungle's larva. Queen Bee charges, fires stingers, and summons bees. Defeating her yields Bee Wax and the Abeemination. One of the most rewarding pre-Hardmode bosses for ranged class players.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 3,400</div><div class="hp-bar"><div class="hp-fill" style="width:50%"></div></div></div>
+        </div>
+        <div class="boss-card">
+          <div class="boss-pixel">💀</div>
+          <div class="boss-name">SKELETRON</div>
+          <div class="boss-type">PRE-HARDMODE | DUNGEON GUARDIAN</div>
+          <div class="boss-desc">The guardian of the Dungeon. Skeletron is a skull with spinning arms that must all be defeated in the same night. Failing to kill it before sunrise results in massive punishment. Defeating him unlocks the Dungeon's treasures and the Clothier NPC.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 4,400</div><div class="hp-bar"><div class="hp-fill" style="width:65%"></div></div></div>
+        </div>
+        <div class="boss-card" style="border-color:var(--lava)">
+          <div class="boss-pixel">👄</div>
+          <div class="boss-name">WALL OF FLESH</div>
+          <div class="boss-type">PRE-HARDMODE | FINAL BOSS</div>
+          <div class="boss-desc">The pre-Hardmode final boss and the gateway to the game's second stage. A massive wall of flesh that spans the entire Underworld, complete with eyes, mouths, and the Hungry. Defeating it permanently transforms the world into Hardmode — the point of no return.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 8,000</div><div class="hp-bar"><div class="hp-fill" style="width:100%;background:linear-gradient(90deg,#c04000,var(--lava))" ></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-hm" class="tab-content">
+      <div class="bosses-grid">
+        <div class="boss-card">
+          <div class="boss-pixel">🤖</div>
+          <div class="boss-name">THE TWINS</div>
+          <div class="boss-type">HARDMODE | MECHANICAL</div>
+          <div class="boss-desc">Two mechanical eyes — Retinazer (laser) and Spazmatism (cursed flames) — that must both be defeated in the same night. One of three mechanical bosses that must be slain to progress through Hardmode. Drops Hallowed Bars and Souls of Sight.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 43,000 (combined)</div><div class="hp-bar"><div class="hp-fill" style="width:75%"></div></div></div>
+        </div>
+        <div class="boss-card">
+          <div class="boss-pixel">🦴</div>
+          <div class="boss-name">SKELETRON PRIME</div>
+          <div class="boss-type">HARDMODE | MECHANICAL</div>
+          <div class="boss-desc">The mechanical counterpart of Skeletron, armed with mechanical arms including a Vice, Saw, Cannon, and Laser. Must be defeated before dawn or it becomes invincible. Drops Hallowed Bars and Souls of Fright.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 28,000+</div><div class="hp-bar"><div class="hp-fill" style="width:80%"></div></div></div>
+        </div>
+        <div class="boss-card">
+          <div class="boss-pixel">⚙</div>
+          <div class="boss-name">THE DESTROYER</div>
+          <div class="boss-type">HARDMODE | MECHANICAL WORM</div>
+          <div class="boss-desc">A massive mechanical version of the Eater of Worlds, with Probes shooting lasers attached to its body. One of the first Hardmode bosses most players tackle, as it drops both Hallowed Bars and Souls of Might needed for Hardmode armor progression.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 80,000</div><div class="hp-bar"><div class="hp-fill" style="width:85%"></div></div></div>
+        </div>
+        <div class="boss-card" style="border-color:var(--jungle)">
+          <div class="boss-pixel">🌿</div>
+          <div class="boss-name">PLANTERA</div>
+          <div class="boss-type">HARDMODE | JUNGLE GUARDIAN</div>
+          <div class="boss-desc">The guardian of the Underground Jungle, awakened by destroying her Bulb. Phase 1 is a large flower that chases you with thorned hooks. Phase 2 transforms into a horrifying spiky mouth. Defeating Plantera is a major milestone that unlocks the Temple and the full Dungeon in Hardmode.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 30,000</div><div class="hp-bar"><div class="hp-fill" style="width:70%;background:linear-gradient(90deg,#1a5a1a,var(--jungle))"></div></div></div>
+        </div>
+        <div class="boss-card" style="border-color:var(--hallow)">
+          <div class="boss-pixel">🌸</div>
+          <div class="boss-name">EMPRESS OF LIGHT</div>
+          <div class="boss-type">HARDMODE | HALLOW GUARDIAN</div>
+          <div class="boss-desc">One of Terraria's most visually stunning bosses, the Empress of Light attacks with rainbow-colored beams of prismatic light. Defeating her during daytime — without taking a single hit — is considered the ultimate Terraria skill challenge and grants the Terraprisma summon weapon.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 70,000</div><div class="hp-bar"><div class="hp-fill" style="width:90%;background:linear-gradient(90deg,#8030c0,var(--hallow))"></div></div></div>
+        </div>
+        <div class="boss-card">
+          <div class="boss-pixel">👁</div>
+          <div class="boss-name">DUKE FISHRON</div>
+          <div class="boss-type">HARDMODE | OPTIONAL</div>
+          <div class="boss-desc">A flying pig-shark-dragon hybrid found by fishing in the Ocean biome with Truffle Worm bait. One of the hardest optional bosses with devastating charge attacks. His drops include the Tempest Staff, Tsunami, and Fishron Wings — some of the best gear available before the endgame.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 50,000</div><div class="hp-bar"><div class="hp-fill" style="width:80%;background:linear-gradient(90deg,#1050c0,#4090ff)"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-postgm" class="tab-content">
+      <div class="bosses-grid">
+        <div class="boss-card">
+          <div class="boss-pixel">🏛</div>
+          <div class="boss-name">GOLEM</div>
+          <div class="boss-type">HARDMODE | TEMPLE GUARDIAN</div>
+          <div class="boss-desc">The guardian of the Jungle Temple, summoned with Lihzahrd Power Cells at the Altar. Golem attacks with fireballs, fist projectiles, and an exposed head in Phase 2. Defeating Golem opens the path to the final questline of Terraria's main story arc.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 9,000</div><div class="hp-bar"><div class="hp-fill" style="width:50%"></div></div></div>
+        </div>
+        <div class="boss-card" style="border-color:#8080ff">
+          <div class="boss-pixel">🧙</div>
+          <div class="boss-name">LUNATIC CULTIST</div>
+          <div class="boss-type">POST-GOLEM | CELESTIAL GATE</div>
+          <div class="boss-desc">The cloaked mastermind who summons the Lunar Events. Found at the Dungeon with his cultist followers after defeating Golem. His defeat triggers the final battle phase of vanilla Terraria — the Celestial Pillars and the approach of the Moon Lord.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 32,000</div><div class="hp-bar"><div class="hp-fill" style="width:70%;background:linear-gradient(90deg,#3030a0,#8080ff)"></div></div></div>
+        </div>
+        <div class="boss-card" style="border-color:#c0d0ff">
+          <div class="boss-pixel">🌙</div>
+          <div class="boss-name">MOON LORD</div>
+          <div class="boss-type">POST-GOLEM | FINAL BOSS</div>
+          <div class="boss-desc">The final boss of Terraria's vanilla game and Cthulhu's true form. Three eyes in his hands and forehead, plus a true eye in his core once the outer eyes are defeated. Moon Lord has some of the highest HP in the game and drops the most powerful vanilla weapons including Terrarian, Meowmere, and S.D.M.G.</div>
+          <div class="boss-hp"><div class="bar-label">HP: 145,000</div><div class="hp-bar"><div class="hp-fill" style="width:100%;background:linear-gradient(90deg,#0a0a20,#8090c0)" style="animation:none"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ground-divider"></div>
+
+<!-- BIOMES -->
+<section id="biomes">
+  <div class="section-inner">
+    <h2 class="section-title">🌍 BIOMES & DIMENSIONS</h2>
+    <div class="section-divider"><span>🗺</span></div>
+
+    <div class="biomes-grid">
+      <div class="biome-card biome-forest">
+        <span class="biome-icon">🌲</span>
+        <div class="biome-name">FOREST</div>
+        <div class="biome-desc">The starting biome. Green trees, slimes, and the Guide NPC. The safest place in the world — for now. Home to the surface and early resources.</div>
+      </div>
+      <div class="biome-card biome-desert">
+        <span class="biome-icon">🏜</span>
+        <div class="biome-name">DESERT</div>
+        <div class="biome-desc">Sandy wasteland with Antlion enemies. Underground Desert features ancient fossils, sandstone blocks, and the formidable Desert Tiger Staff.</div>
+      </div>
+      <div class="biome-card biome-snow">
+        <span class="biome-icon">❄</span>
+        <div class="biome-name">SNOW BIOME</div>
+        <div class="biome-desc">A frozen tundra with ice blocks and unique enemies. Underground Ice biome yields the Staff of Frost, Blizzard Staff, and Frost armor in Hardmode.</div>
+      </div>
+      <div class="biome-card biome-jungle">
+        <span class="biome-icon">🌿</span>
+        <div class="biome-name">JUNGLE</div>
+        <div class="biome-desc">The most dangerous early biome. Dense vegetation, Hornets, and Man Eaters. Underground Jungle hides Plantera Bulbs, Life Fruit, and the Jungle Temple.</div>
+      </div>
+      <div class="biome-card biome-ocean">
+        <span class="biome-icon">🌊</span>
+        <div class="biome-name">OCEAN</div>
+        <div class="biome-desc">Found at world edges. Sharks, Crabs, and Starfish. The Ocean contains Water Chests and is the only place to find Duke Fishron via deep-sea fishing.</div>
+      </div>
+      <div class="biome-card biome-corruption">
+        <span class="biome-icon">💜</span>
+        <div class="biome-name">CORRUPTION</div>
+        <div class="biome-desc">One of two world evils. Purple spreading biome with Chasms, Devourers, and the Eater of Worlds boss. Contains Demonite Ore and Shadow Chests.</div>
+      </div>
+      <div class="biome-card biome-crimson">
+        <span class="biome-icon">🩸</span>
+        <div class="biome-name">CRIMSON</div>
+        <div class="biome-desc">The alternative world evil. Red grotesque terrain filled with Face Monsters and the Brain of Cthulhu. Contains Crimtane Ore and Ichor in Hardmode.</div>
+      </div>
+      <div class="biome-card biome-hallow">
+        <span class="biome-icon">✨</span>
+        <div class="biome-name">THE HALLOW</div>
+        <div class="biome-desc">A "good" biome born in Hardmode. Rainbow trees, Unicorns, and Pixies. Source of Holy Arrows, Blessed Apples, and the Empress of Light boss arena.</div>
+      </div>
+      <div class="biome-card biome-underworld">
+        <span class="biome-icon">🔥</span>
+        <div class="biome-name">THE UNDERWORLD</div>
+        <div class="biome-desc">The deepest layer of the world, a hellish landscape of Hellstone, lava lakes, and Ruined Houses. Home of the Wall of Flesh and the most valuable pre-HM ores.</div>
+      </div>
+      <div class="biome-card biome-dungeon">
+        <span class="biome-icon">🏰</span>
+        <div class="biome-name">THE DUNGEON</div>
+        <div class="biome-desc">An underground fortress guarded by Skeletron. Contains powerful chests with Muramasa, Cobalt Shield, and in Hardmode — Dungeon Spirits and Biome Chests.</div>
+      </div>
+      <div class="biome-card biome-sky">
+        <span class="biome-icon">☁</span>
+        <div class="biome-name">SPACE / SKY</div>
+        <div class="biome-desc">The uppermost layer of the world. Floating islands hide Skyware Chests with Starfury, Lucky Horseshoe, and Shiny Red Balloons. Harpies patrol the skies.</div>
+      </div>
+      <div class="biome-card biome-mushroom">
+        <span class="biome-icon">🍄</span>
+        <div class="biome-name">MUSHROOM BIOME</div>
+        <div class="biome-desc">A glowing blue underground paradise with giant mushrooms and Truffle NPCs. Surface Glowing Mushroom biomes host the Truffle NPC and provide the only Truffle Worm — essential for Duke Fishron.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="terrain-strip"></div>
+
+<!-- UPDATES -->
+<section id="updates">
+  <div class="section-inner">
+    <h2 class="section-title">📦 MAJOR UPDATES</h2>
+    <div class="section-divider"><span>🔄</span></div>
+
+    <div class="updates-grid">
+      <div class="update-card">
+        <div class="update-version">v1.0</div>
+        <div class="update-name">THE ORIGINAL RELEASE</div>
+        <div class="update-date">May 16, 2011</div>
+        <div class="update-desc">The game that started it all. 6 bosses, basic biomes, and the core loop of dig-build-fight that would define a genre. Sold 50,000 copies on day one. Built on Microsoft XNA in just a few months of frenzied development.</div>
+      </div>
+      <div class="update-card">
+        <div class="update-version">v1.1</div>
+        <div class="update-name">HARDMODE AWAKENING</div>
+        <div class="update-date">December 1, 2011</div>
+        <div class="update-desc">Added Hardmode — the game-within-a-game that begins after defeating the Wall of Flesh. Mechanical bosses, Hallowed biome, new ore tiers, and vastly increased difficulty. Transformed Terraria from a good game into a deep one.</div>
+      </div>
+      <div class="update-card">
+        <div class="update-version">v1.2</div>
+        <div class="update-name">THE GREAT EXPANSION</div>
+        <div class="update-date">October 1, 2013</div>
+        <div class="update-desc">Redigit's legendary return. Added the Crimson biome as an alternative to Corruption, hundreds of new items, the Dungeon's post-Plantera content, Ocean biome enemies, new NPCs, and the Solar Eclipse event. Widely considered the best update in Terraria history.</div>
+      </div>
+      <div class="update-card">
+        <div class="update-version">v1.3</div>
+        <div class="update-name">LUNAR APOCALYPSE</div>
+        <div class="update-date">June 30, 2015</div>
+        <div class="update-desc">Added Expert Mode, the Lunar Events, Celestial Pillars, the Moon Lord final boss, a new endgame tier, and tModLoader support laying the ground for the mod community. Also added Duke Fishron and the Goblin Tinkerer's reforge system revamp.</div>
+      </div>
+      <div class="update-card">
+        <div class="update-version">v1.3.5</div>
+        <div class="update-name">QUALITY IMPROVEMENTS</div>
+        <div class="update-date">September 26, 2017</div>
+        <div class="update-desc">Added a new NPC (Tax Collector), the Old One's Army event crossover with Dungeon Defenders, new items, and improved world generation. Set the stage for the final chapter of Terraria.</div>
+      </div>
+      <div class="update-card">
+        <div class="update-version">v1.4</div>
+        <div class="update-name">JOURNEY'S END</div>
+        <div class="update-date">May 16, 2020</div>
+        <div class="update-desc">The "final" update released on Terraria's 9th birthday. Journey Mode, Master Mode, Golf, Bestiary, Shimmer liquid, Empress of Light, Queen Slime, hundreds of new items, and tModLoader on Steam. The community's "final update" meme was born.</div>
+      </div>
+      <div class="update-card">
+        <div class="update-version">v1.4.1–1.4.3</div>
+        <div class="update-name">LABOR OF LOVE</div>
+        <div class="update-date">2021–2022</div>
+        <div class="update-desc">Despite "Journey's End," Re-Logic kept updating. Added Don't Starve Together crossover content, resource pack support via Steam Workshop, and massive quality-of-life improvements. The community grew even larger.</div>
+      </div>
+      <div class="update-card">
+        <div class="update-version">v1.4.4</div>
+        <div class="update-name">DON'T STARVE CROSSOVER</div>
+        <div class="update-date">September 28, 2022</div>
+        <div class="update-desc">A surprise full content update adding the Deerclops boss from Don't Starve Together, new items, biome torches improvements, the Terraprisma challenge, new town NPC interactions, and the controversial Shimmer liquid that converts items.</div>
+      </div>
+      <div class="update-card">
+        <div class="update-version">v1.4.5</div>
+        <div class="update-name">CROSSOVER EXTRAVAGANZA</div>
+        <div class="update-date">2024</div>
+        <div class="update-desc">Added cross-game collaborations, hundreds of balance changes, new vanity sets, improved worldgen, the Dead Cells crossover content, and quality-of-life refinements across the board. Proof that Re-Logic would never truly stop developing Terraria.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ground-divider"></div>
+
+<!-- WEAPONS -->
+<section id="weapons">
+  <div class="section-inner">
+    <h2 class="section-title">⚔ LEGENDARY WEAPONS</h2>
+    <div class="section-divider"><span>🗡</span></div>
+
+    <div class="pixel-panel" style="overflow-x:auto">
+      <table class="weapons-table">
+        <thead>
+          <tr>
+            <th>WEAPON</th>
+            <th>TYPE</th>
+            <th>DAMAGE</th>
+            <th>SOURCE</th>
+            <th>NOTES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🌙 Terra Blade</td>
+            <td><span class="tier-melee">Melee</span></td>
+            <td class="dmg-val">115</td>
+            <td>Crafted (Hardmode)</td>
+            <td>Fires powerful True Sword Beam</td>
+          </tr>
+          <tr>
+            <td>😺 Meowmere</td>
+            <td><span class="tier-melee">Melee</span></td>
+            <td class="dmg-val">200</td>
+            <td>Moon Lord drop</td>
+            <td>Highest base damage sword; fires cats</td>
+          </tr>
+          <tr>
+            <td>🌀 Terrarian</td>
+            <td><span class="tier-melee">Melee (Yoyo)</span></td>
+            <td class="dmg-val">190</td>
+            <td>Moon Lord drop</td>
+            <td>Fires swirling projectile rings</td>
+          </tr>
+          <tr>
+            <td>🏹 Tsunami</td>
+            <td><span class="tier-ranged">Ranged (Bow)</span></td>
+            <td class="dmg-val">100</td>
+            <td>Duke Fishron drop</td>
+            <td>Fires 5 arrows simultaneously</td>
+          </tr>
+          <tr>
+            <td>⚡ S.D.M.G.</td>
+            <td><span class="tier-ranged">Ranged (Gun)</span></td>
+            <td class="dmg-val">85</td>
+            <td>Moon Lord drop</td>
+            <td>Ultimate endgame gun; insane DPS</td>
+          </tr>
+          <tr>
+            <td>🦋 Last Prism</td>
+            <td><span class="tier-magic">Magic</span></td>
+            <td class="dmg-val">100</td>
+            <td>Moon Lord drop</td>
+            <td>6 converging rainbow laser beams</td>
+          </tr>
+          <tr>
+            <td>🌊 Razorblade Typhoon</td>
+            <td><span class="tier-magic">Magic</span></td>
+            <td class="dmg-val">90</td>
+            <td>Duke Fishron drop</td>
+            <td>Home-seeking razor discs</td>
+          </tr>
+          <tr>
+            <td>🌸 Terraprisma</td>
+            <td><span class="tier-summon">Summon</span></td>
+            <td class="dmg-val">90</td>
+            <td>Daytime EoL (no-hit)</td>
+            <td>Most powerful summon; hardest challenge</td>
+          </tr>
+          <tr>
+            <td>🌟 Starfury</td>
+            <td><span class="tier-melee">Melee</span></td>
+            <td class="dmg-val">38</td>
+            <td>Sky Island Chest</td>
+            <td>Iconic early game; calls stars from sky</td>
+          </tr>
+          <tr>
+            <td>🗡 Night's Edge</td>
+            <td><span class="tier-melee">Melee</span></td>
+            <td class="dmg-val">42</td>
+            <td>Crafted</td>
+            <td>Best pre-Hardmode sword; community classic</td>
+          </tr>
+          <tr>
+            <td>🔱 Trident of... (Poseidon)</td>
+            <td><span class="tier-magic">Magic</span></td>
+            <td class="dmg-val">45</td>
+            <td>Ocean enemies</td>
+            <td>Fires powerful water spheres</td>
+          </tr>
+          <tr>
+            <td>☄ Space Gun</td>
+            <td><span class="tier-ranged">Ranged (Magic/Gun)</span></td>
+            <td class="dmg-val">17</td>
+            <td>Meteor Armor set</td>
+            <td>Fires free with Meteor Armor — iconic combo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="terrain-strip"></div>
+
+<!-- MODS -->
+<section id="mods">
+  <div class="section-inner">
+    <h2 class="section-title">🧪 THE MODDING UNIVERSE</h2>
+    <div class="section-divider"><span>⚗</span></div>
+
+    <div class="pixel-panel" style="margin-bottom:30px;border-color:var(--corruption)">
+      <div style="font-family:'VT323',monospace;font-size:20px;color:var(--text-main);line-height:1.6">
+        Terraria's modding scene is one of the most vibrant in all of gaming. Powered by tModLoader — which received official Steam support in 2020 — thousands of mods ranging from small quality-of-life tweaks to massive content expansions have been created. In 2022, Re-Logic even hired a Minecraft modder specifically to work on tModLoader. The Calamity mod's soundtrack even outranked the base game in a 2024 Opera GX poll.
+      </div>
+    </div>
+
+    <div class="mods-grid">
+      <div class="mod-card">
+        <div class="mod-name">CALAMITY MOD</div>
+        <div class="mod-type">MASSIVE CONTENT EXPANSION</div>
+        <div class="mod-desc">The most downloaded Terraria mod of all time. Adds an enormous number of new bosses (24+), items, biomes, and a complete post-Moon Lord progression system. The Calamity soundtrack ranked 9th among all video game soundtracks ever in a 2024 poll — beating the base game itself. Developed by MountainDrew/Fabsol.</div>
+        <div class="mod-downloads">📥 Downloads: 16M+ on tModLoader</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-name">THORIUM MOD</div>
+        <div class="mod-type">CLASS & CONTENT EXPANSION</div>
+        <div class="mod-desc">Adds three entirely new classes — Healer, Bard, and Thrower — plus hundreds of items, biomes, and bosses that feel as polished as vanilla Terraria. Thorium is often cited as the most "vanilla-feeling" large content mod, making it ideal for first-time modded playthroughs.</div>
+        <div class="mod-downloads">📥 Downloads: 8M+ on tModLoader</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-name">SPIRIT MOD</div>
+        <div class="mod-type">CONTENT EXPANSION</div>
+        <div class="mod-desc">Adds new biomes, bosses, enemies, and items with unique lore. The Spirit Mod is known for its high-quality sprites and its Briar and Ancient biomes. A beloved entry in the modding community for players who want more lore depth alongside their new content.</div>
+        <div class="mod-downloads">📥 Downloads: 4M+ on tModLoader</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-name">STARS ABOVE</div>
+        <div class="mod-type">STORY & CHARACTERS</div>
+        <div class="mod-desc">A unique mod that adds story-driven characters, dialogue, and a narrative layer to Terraria's world. Features deep lore integration, unique weapons called "Aspected Weapons," and a series of questline-style events. A fan favorite for players who want a more RPG-like experience.</div>
+        <div class="mod-downloads">📥 Downloads: 2M+ on tModLoader</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-name">TMODLOADER</div>
+        <div class="mod-type">MOD FRAMEWORK (OFFICIAL)</div>
+        <div class="mod-desc">The backbone of all Terraria modding. tModLoader allows players to install, manage, and play with mods directly through Steam. After receiving official Re-Logic support in 2020 and its own Steam page, it has become the definitive way to experience Terraria's massive modding ecosystem.</div>
+        <div class="mod-downloads">📥 1M+ Steam installs</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-name">OVERHAUL</div>
+        <div class="mod-type">GAMEPLAY OVERHAUL</div>
+        <div class="mod-desc">Transforms Terraria's gameplay with seasonal changes, rolling dodges, new sound design, improved combat mechanics, and dynamic lighting. Terraria Overhaul aims to modernize Terraria's mechanics for a fresh experience while preserving the game's core identity — a controversial but acclaimed redesign.</div>
+        <div class="mod-downloads">📥 Downloads: 3M+ on tModLoader</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ground-divider"></div>
+
+<!-- MINIGAMES -->
+<section id="minigames">
+  <div class="section-inner">
+    <h2 class="section-title">🎮 MINI GAMES</h2>
+    <div class="section-divider"><span>🕹</span></div>
+
+    <div class="minigames-grid">
+
+      <!-- QUIZ GAME -->
+      <div class="game-container">
+        <div class="game-header">
+          <span class="game-title">❓ TERRARIA TRIVIA</span>
+          <span style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--text-muted)" id="quiz-prog">Q 1/10</span>
+        </div>
+        <div class="game-body">
+          <div id="quiz-area">
+            <div class="quiz-question" id="q-text">Loading question...</div>
+            <div class="quiz-options" id="q-opts"></div>
+            <div class="quiz-feedback" id="q-feedback"></div>
+            <div class="quiz-score" id="q-score">SCORE: 0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIXEL RUNNER -->
+      <div class="game-container">
+        <div class="game-header">
+          <span class="game-title">🏃 TERRARIAN RUNNER</span>
+          <span style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--text-muted)" id="runner-hi">BEST: 0</span>
+        </div>
+        <div class="game-body">
+          <canvas id="runner-canvas" width="400" height="160"></canvas>
+          <div class="runner-score" id="runner-score">PRESS START TO PLAY</div>
+          <div class="runner-controls">
+            <button class="game-btn" id="runner-start-btn" onclick="startRunner()">▶ START</button>
+            <button class="game-btn" onclick="jumpRunner()">⬆ JUMP</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ITEM GUESSER -->
+      <div class="game-container">
+        <div class="game-header">
+          <span class="game-title">🎯 ITEM GUESSER</span>
+          <span style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--text-muted)" id="item-score-disp">SCORE: 0</span>
+        </div>
+        <div class="game-body">
+          <div id="item-game-area">
+            <div class="item-display" id="item-display">❓</div>
+            <div class="item-hint" id="item-hint">Press Start to begin!</div>
+            <div class="item-options-grid" id="item-opts"></div>
+            <div class="runner-controls" style="margin-top:12px">
+              <button class="game-btn" onclick="startItemGame()">▶ START</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEMORY MATCH -->
+      <div class="game-container">
+        <div class="game-header">
+          <span class="game-title">🧠 PIXEL MEMORY</span>
+          <span style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--text-muted)" id="mem-moves">MOVES: 0</span>
+        </div>
+        <div class="game-body">
+          <div id="memory-grid" class="mem-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px"></div>
+          <div class="mem-status" id="mem-status">Match all pairs to win!</div>
+          <div class="runner-controls" style="margin-top:12px">
+            <button class="game-btn" onclick="initMemory()">🔄 NEW GAME</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="terrain-strip"></div>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="section-inner">
+    <h2 class="section-title">📊 TERRARIA BY THE NUMBERS</h2>
+    <div class="section-divider"><span>💎</span></div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="stat-num" data-target="64">0</span><span class="stat-num">M+</span>
+        <span class="stat-name">Total Copies Sold</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" data-target="5400">0</span><span class="stat-num">+</span>
+        <span class="stat-name">Items in v1.4</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" data-target="30">0</span><span class="stat-num">+</span>
+        <span class="stat-name">Boss Encounters</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" data-target="97">0</span><span class="stat-num">%</span>
+        <span class="stat-name">Positive Steam Reviews</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" data-target="1000000">0</span>
+        <span class="stat-name">Steam Reviews (1M+ Milestone)</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" data-target="14">0</span>
+        <span class="stat-name">Years Active (2011–2025)</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" data-target="11">0</span>
+        <span class="stat-name">Current Team Members</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" data-target="16">0</span><span class="stat-num">M+</span>
+        <span class="stat-name">Calamity Mod Downloads</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="terrain-strip"></div>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="section-inner">
+    <h2 class="section-title">🏆 HALL OF ACHIEVEMENTS</h2>
+    <div class="section-divider"><span>🥇</span></div>
+
+    <div class="achievements-grid">
+      <div class="ach-card">
+        <span class="ach-icon">⛏</span>
+        <div>
+          <div class="ach-name">TIMBER!!</div>
+          <div class="ach-desc">Chop down your first tree. Every legend begins somewhere.</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">🌙</span>
+        <div>
+          <div class="ach-name">NO HOBO</div>
+          <div class="ach-desc">Built a suitable house for an NPC to live in. A proper home!</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">👁</span>
+        <div>
+          <div class="ach-name">OPHTHALMOLOGIST</div>
+          <div class="ach-desc">Defeated the Eye of Cthulhu. Your first real boss kill.</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">💀</span>
+        <div>
+          <div class="ach-name">BUCKETS OF BOLTS</div>
+          <div class="ach-desc">Defeated the Destroyer, Twins, and Skeletron Prime.</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">🌿</span>
+        <div>
+          <div class="ach-name">THE JUNGLE GROWS RESTLESS</div>
+          <div class="ach-desc">Plantera has been awakened in your world. Hardmode reached.</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">🌙</span>
+        <div>
+          <div class="ach-name">MOON LORD VANQUISHED</div>
+          <div class="ach-desc">Defeated the Moon Lord. You have completed the adventure!</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">🌸</span>
+        <div>
+          <div class="ach-name">CELESTIAL CHALLENGER</div>
+          <div class="ach-desc">Defeated the daytime Empress of Light without taking damage.</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">🐟</span>
+        <div>
+          <div class="ach-name">REAL ESTATE AGENT</div>
+          <div class="ach-desc">You have attracted every possible town NPC. Community built!</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">⭐</span>
+        <div>
+          <div class="ach-name">STAR POWER</div>
+          <div class="ach-desc">Obtained maximum mana with mana crystals. Channeling the stars.</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">🔥</span>
+        <div>
+          <div class="ach-name">THROWING LINES</div>
+          <div class="ach-desc">Equipped a full set of fishing accessories to maximize catch rate.</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">💎</span>
+        <div>
+          <div class="ach-name">GET A LIFE</div>
+          <div class="ach-desc">Consumed a Life Crystal, extending maximum health. Growth begins.</div>
+        </div>
+      </div>
+      <div class="ach-card">
+        <span class="ach-icon">🗺</span>
+        <div>
+          <div class="ach-name">THERE ARE SOME WHO CALL HIM...</div>
+          <div class="ach-desc">You have found Tim the skeleton wizard in the caverns. Rare!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREDITS SECTION -->
+<section id="credits">
+  <canvas id="credits-canvas"></canvas>
+  <div class="credits-inner">
+
+    <!-- Big animated title -->
+    <div class="credits-title-wrap">
+      <div class="credits-title-glow"></div>
+      <div class="credits-big-title pixel">MADE WITH LOVE<br/>&amp; BLOCKS BY</div>
+      <div class="credits-name-wrap">
+        <div class="credits-name-bg"></div>
+        <span class="credits-player-name pixel">SSWAYAM</span>
+        <div class="credits-name-particles" id="nameParticles"></div>
+      </div>
+    </div>
+
+    <!-- Player card -->
+    <div class="credits-player-card">
+      <!-- Animated pixel character on card -->
+      <div class="cred-char-wrap">
+        <canvas id="char-canvas" width="96" height="128"></canvas>
+        <div class="cred-char-shadow"></div>
+      </div>
+      <div class="cred-info">
+        <div class="cred-info-row">
+          <span class="cred-label pixel">PLAYER</span>
+          <span class="cred-value pixel" style="color:var(--gold)">SSWAYAM</span>
+        </div>
+        <div class="cred-info-row">
+          <span class="cred-label pixel">PLAYING SINCE</span>
+          <span class="cred-value pixel" style="color:var(--grass-bright)">2021</span>
+        </div>
+        <div class="cred-info-row">
+          <span class="cred-label pixel">EXPERIENCE</span>
+          <span class="cred-value pixel" style="color:var(--hallow)">5 YEARS</span>
+        </div>
+        <div class="cred-info-row">
+          <span class="cred-label pixel">STATUS</span>
+          <span class="cred-value pixel cred-online">● ONLINE</span>
+        </div>
+        <div class="cred-bars">
+          <div class="cred-bar-row">
+            <span class="cred-bar-lbl pixel">LORE KNOWLEDGE</span>
+            <div class="cred-bar-track"><div class="cred-bar-fill" style="width:0%" data-w="95%" data-color="#f5c518"></div></div>
+            <span class="cred-bar-pct pixel">99%</span>
+          </div>
+          <div class="cred-bar-row">
+            <span class="cred-bar-lbl pixel">BOSS KILLS</span>
+            <div class="cred-bar-track"><div class="cred-bar-fill" style="width:0%" data-w="88%" data-color="#e84040"></div></div>
+            <span class="cred-bar-pct pixel">100%</span>
+          </div>
+          <div class="cred-bar-row">
+            <span class="cred-bar-lbl pixel">BUILDING SKILL</span>
+            <div class="cred-bar-track"><div class="cred-bar-fill" style="width:0%" data-w="80%" data-color="#5ecb4b"></div></div>
+            <span class="cred-bar-pct pixel">72%</span>
+          </div>
+          <div class="cred-bar-row">
+            <span class="cred-bar-lbl pixel">COMMUNITY</span>
+            <div class="cred-bar-track"><div class="cred-bar-fill" style="width:0%" data-w="100%" data-color="#e84393"></div></div>
+            <span class="cred-bar-pct pixel">100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Friend request callout -->
+    <div class="credits-friend-box">
+      <div class="friend-box-glow"></div>
+      <div class="friend-icon-row">
+        <span class="friend-icon-big">🤝</span>
+      </div>
+      <div class="friend-title pixel">FRIEND REQUEST OPEN!</div>
+      <div class="friend-text vt323">
+        Hey fellow Terrarian! My name in-game is <span style="color:var(--gold);font-family:'Press Start 2P',monospace;font-size:14px">Sswayam</span> and I've been digging, fighting, and building since <span style="color:var(--grass-bright)">2021</span>. 
+        Even though I'm only a 5-year-old player compared to the veterans, I've dived deep into every corner of Terraria's history — from Redigit's humble living-room dev session all the way to the Calamity mod's soundtrack dethroning the base game. That passion for the lore is exactly how this whole encyclopedia came to life!
+        <br/><br/>
+        <span style="color:var(--gold)">Feel free to add me as a friend anytime.</span> Whether you're a complete newbie or a Moon Lord-slaying veteran — all Terrarians are welcome! ⚔
+      </div>
+      <div class="friend-btn-row">
+        <div class="friend-btn pixel">+ ADD FRIEND</div>
+        <div class="friend-tag pixel">@Sswayam</div>
+      </div>
+    </div>
+
+    <!-- Rolling credits -->
+    <div class="rolling-credits-wrap">
+      <div class="rolling-credits-title pixel">— SPECIAL THANKS —</div>
+      <div class="rolling-credits" id="rollingCredits">
+        <div class="rc-entry">
+          <span class="rc-role pixel">CREATOR OF TERRARIA</span>
+          <span class="rc-name vt323">Andrew "Redigit" Spinks</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">ORIGINAL MUSIC</span>
+          <span class="rc-name vt323">Scott Lloyd Shelly</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">ORIGINAL SPRITE ART</span>
+          <span class="rc-name vt323">Finn "Tiyuri" Brice</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">LEAD ARTIST</span>
+          <span class="rc-name vt323">Victor "Crowno" Moura</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">VICE PRESIDENT</span>
+          <span class="rc-name vt323">Whitney "Cenx" Spinks</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">LEAD DEVELOPER</span>
+          <span class="rc-name vt323">Yorai "Yoraiz0r" Omer</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">MARKETING &amp; COMMUNITY</span>
+          <span class="rc-name vt323">Ted "Loki" Murphy</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">COMMUNITY MANAGER</span>
+          <span class="rc-name vt323">Amanda "Safeman" Powell</span>
+        </div>
+        <div class="rc-divider">⚔ &nbsp; CONTENT CREATORS &nbsp; ⚔</div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">THE LEGEND</span>
+          <span class="rc-name vt323">Yrimir — Greatest Vanilla Player</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">THE EDUCATOR</span>
+          <span class="rc-name vt323">ChippyGaming</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">THE BUILDER</span>
+          <span class="rc-name vt323">Khaios — Official Trailer Builder</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">THE COMEDIAN</span>
+          <span class="rc-name vt323">HappyDays</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">THE GUIDE</span>
+          <span class="rc-name vt323">Wand of Sparking</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">THE VETERAN</span>
+          <span class="rc-name vt323">Pedguin</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">THE ANALYST</span>
+          <span class="rc-name vt323">Sorbet Cafe</span>
+        </div>
+        <div class="rc-divider">💎 &nbsp; THE MODDING LEGENDS &nbsp; 💎</div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">CALAMITY MOD</span>
+          <span class="rc-name vt323">MountainDrew / Fabsol &amp; Team</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">THORIUM MOD</span>
+          <span class="rc-name vt323">DivermanSam &amp; Team</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">TMODLOADER</span>
+          <span class="rc-name vt323">jopojelly &amp; blushiemagic</span>
+        </div>
+        <div class="rc-divider">🌟 &nbsp; PUBLISHED BY &nbsp; 🌟</div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">CONSOLE &amp; MOBILE PUBLISHER</span>
+          <span class="rc-name vt323">505 Games</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">MOBILE DEVELOPER</span>
+          <span class="rc-name vt323">Codeglue</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">CONSOLE DEVELOPER</span>
+          <span class="rc-name vt323">Engine Software</span>
+        </div>
+        <div class="rc-divider">❤ &nbsp; THIS WEBSITE &nbsp; ❤</div>
+        <div class="rc-entry big-credit">
+          <span class="rc-role pixel">RESEARCH, DESIGN &amp; LOVE</span>
+          <span class="rc-name vt323 big-name">Sswayam</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">PLAYING TERRARIA SINCE</span>
+          <span class="rc-name vt323">2021 — 5 Years of Passion</span>
+        </div>
+        <div class="rc-entry">
+          <span class="rc-role pixel">BUILT WITH</span>
+          <span class="rc-name vt323">HTML, CSS, JavaScript &amp; Pure Love</span>
+        </div>
+        <div class="rc-final pixel">MADE WITH LOVE AND BLOCKS BY SSWAYAM</div>
+        <div class="rc-tagline vt323">⚔ Dig. Fight. Explore. Build. ⚔</div>
+        <div style="height:120px"></div>
+      </div>
+    </div>
+
+    <!-- Final stamp -->
+    <div class="credits-stamp">
+      <div class="stamp-inner pixel">SSWAYAM<br/>TERRARIA WORLD</div>
+      <div class="stamp-year vt323">EST. 2021</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span class="pixel-torch">🔥</span> TERRARIA WORLD <span class="pixel-torch">🔥</span></div>
+  <div class="footer-text">
+    This fan encyclopedia is a tribute to Re-Logic's incredible creation — a game that has sold over 64 million copies, maintained a 97% positive rating on Steam, and continues to receive updates more than 14 years after release. Dig. Fight. Explore. Build.
+  </div>
+  <div class="footer-links">
+    <a href="https://terraria.org" target="_blank">Official Site</a>
+    <a href="https://terraria.wiki.gg" target="_blank">Official Wiki</a>
+    <a href="https://store.steampowered.com/app/105600" target="_blank">Steam Page</a>
+    <a href="https://forums.terraria.org" target="_blank">Forums</a>
+    <a href="https://discord.gg/terraria" target="_blank">Discord</a>
+  </div>
+  <div class="footer-copy">
+    ⚔ Fan-made encyclopedia • Not affiliated with Re-Logic • All game content belongs to Re-Logic ⚔<br>
+    <span style="font-size:12px;margin-top:6px;display:block">Built with ❤ by a Terraria fan • © 2026</span>
+  </div>
+</footer>
+
+<script>
+// ===================== HERO CANVAS =====================
+const heroCanvas = document.getElementById('hero-canvas');
+const hctx = heroCanvas.getContext('2d');
+
+function resizeHeroCanvas() {
+  heroCanvas.width = window.innerWidth;
+  heroCanvas.height = window.innerHeight;
+}
+resizeHeroCanvas();
+window.addEventListener('resize', resizeHeroCanvas);
+
+const stars = Array.from({length: 200}, () => ({
+  x: Math.random(), y: Math.random() * 0.7,
+  size: Math.random() * 2 + 0.5,
+  twinkle: Math.random() * Math.PI * 2,
+  speed: Math.random() * 0.03 + 0.01
+}));
+
+// Pixel clouds
+const clouds = Array.from({length: 8}, () => ({
+  x: Math.random(),
+  y: 0.1 + Math.random() * 0.3,
+  w: 80 + Math.random() * 120,
+  speed: 0.00005 + Math.random() * 0.0001
+}));
+
+// Terrain blocks
+const terrainData = [];
+const BLOCK_SIZE = 16;
+
+function genTerrain(W, H) {
+  terrainData.length = 0;
+  const cols = Math.ceil(W / BLOCK_SIZE) + 2;
+  const groundY = Math.floor(H * 0.78 / BLOCK_SIZE);
+  const colors = ['#3a8c2f','#3a8c2f','#6b4423','#6b4423','#7a7a7a'];
+  for (let col = 0; col < cols; col++) {
+    for (let row = groundY; row < groundY + 5; row++) {
+      const noise = Math.sin(col * 0.4) * 1.5 + Math.sin(col * 0.17) * 2;
+      const adjustedRow = row + Math.round(noise);
+      const colorIdx = row === groundY ? 0 : (row < groundY + 3 ? 2 : 4);
+      terrainData.push({
+        x: col * BLOCK_SIZE,
+        y: adjustedRow * BLOCK_SIZE,
+        color: colors[colorIdx],
+        dark: colorIdx === 0 ? '#2d7426' : (colorIdx === 2 ? '#4a2e12' : '#4a4a4a')
+      });
+    }
+  }
+}
+
+// Floating islands
+const islands = Array.from({length: 3}, (_, i) => ({
+  x: (0.2 + i * 0.3) * window.innerWidth,
+  y: (0.35 + Math.random() * 0.15) * window.innerHeight,
+  w: 80 + Math.random() * 60,
+  floatOffset: Math.random() * Math.PI * 2
+}));
+
+let heroTime = 0;
+let heroAnim;
+
+function drawHero() {
+  const W = heroCanvas.width, H = heroCanvas.height;
+  heroTime += 0.016;
+
+  // Sky gradient
+  const grd = hctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, '#1a0a2e');
+  grd.addColorStop(0.4, '#0d1b3e');
+  grd.addColorStop(0.75, '#163347');
+  grd.addColorStop(1, '#0a0a14');
+  hctx.fillStyle = grd;
+  hctx.fillRect(0, 0, W, H);
+
+  // Stars
+  stars.forEach(s => {
+    s.twinkle += s.speed;
+    const alpha = 0.4 + 0.6 * Math.sin(s.twinkle) * 0.5 + 0.5;
+    hctx.fillStyle = `rgba(255,255,220,${alpha})`;
+    hctx.fillRect(
+      Math.round(s.x * W),
+      Math.round(s.y * H),
+      Math.round(s.size), Math.round(s.size)
+    );
+  });
+
+  // Moon
+  const moonX = W * 0.85, moonY = H * 0.15;
+  hctx.fillStyle = '#e8dcc8';
+  for (let dx = -24; dx <= 24; dx += 8) {
+    for (let dy = -24; dy <= 24; dy += 8) {
+      if (dx*dx+dy*dy <= 576) {
+        hctx.fillStyle = (dx+dy) % 16 === 0 ? '#c8b878' : '#e8dcc8';
+        hctx.fillRect(moonX+dx, moonY+dy, 8, 8);
+      }
+    }
+  }
+
+  // Clouds (pixel style)
+  clouds.forEach(c => {
+    c.x += c.speed;
+    if (c.x > 1.2) c.x = -0.2;
+    const cx = c.x * W, cy = c.y * H;
+    hctx.fillStyle = 'rgba(200,220,255,0.15)';
+    const blocks = [
+      [0,8,c.w,16], [-8,16,c.w+16,16], [8,0,c.w-16,12]
+    ];
+    blocks.forEach(([bx,by,bw,bh]) => {
+      for (let px = 0; px < bw; px += 8) {
+        for (let py = 0; py < bh; py += 8) {
+          hctx.fillRect(Math.round(cx+bx+px), Math.round(cy+by+py), 7, 7);
+        }
+      }
+    });
+  });
+
+  // Floating islands
+  islands.forEach(isl => {
+    const floatY = isl.y + Math.sin(heroTime * 0.5 + isl.floatOffset) * 6;
+    // Grass top
+    hctx.fillStyle = '#3a8c2f';
+    for (let px = 0; px < isl.w; px += 8) {
+      hctx.fillRect(Math.round(isl.x + px), Math.round(floatY), 7, 8);
+    }
+    // Dirt body
+    hctx.fillStyle = '#6b4423';
+    for (let px = 0; px < isl.w - 8; px += 8) {
+      for (let py = 8; py < 24; py += 8) {
+        hctx.fillRect(Math.round(isl.x + 4 + px), Math.round(floatY + py), 7, 7);
+      }
+    }
+  });
+
+  // Terrain
+  if (terrainData.length === 0) genTerrain(W, H);
+  terrainData.forEach(b => {
+    hctx.fillStyle = b.color;
+    hctx.fillRect(b.x, b.y, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+    hctx.fillStyle = b.dark;
+    hctx.fillRect(b.x + BLOCK_SIZE - 3, b.y, 2, BLOCK_SIZE - 1);
+    hctx.fillRect(b.x, b.y + BLOCK_SIZE - 3, BLOCK_SIZE - 1, 2);
+  });
+
+  // Trees
+  const treePositions = [0.05, 0.12, 0.22, 0.35, 0.62, 0.75, 0.88, 0.95];
+  const groundBase = Math.floor(H * 0.78);
+  treePositions.forEach((tx, i) => {
+    const treex = tx * W;
+    const treeh = 48 + (i % 3) * 16;
+    hctx.fillStyle = '#4a3020';
+    for (let py = 0; py < treeh; py += 8) {
+      hctx.fillRect(treex, groundBase - py - 8, 8, 8);
+    }
+    hctx.fillStyle = '#2d6e22';
+    hctx.fillRect(treex - 16, groundBase - treeh - 8, 40, 24);
+    hctx.fillRect(treex - 12, groundBase - treeh - 16, 32, 12);
+    hctx.fillRect(treex - 8, groundBase - treeh - 22, 24, 10);
+  });
+
+  heroAnim = requestAnimationFrame(drawHero);
+}
+
+drawHero();
+
+// ===================== PARTICLES =====================
+function createParticles() {
+  const container = document.getElementById('particles');
+  const types = ['⭐','✨','💫','🌟'];
+  setInterval(() => {
+    if (Math.random() > 0.7) return;
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (4 + Math.random() * 6) + 's';
+    p.style.animationDelay = Math.random() * 2 + 's';
+    p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+    const colors = ['#f5c518','#5ecb4b','#e84393','#80c0ff','#ff6b00'];
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 10000);
+  }, 300);
+}
+createParticles();
+
+// ===================== NOTIFICATION =====================
+setTimeout(() => {
+  const n = document.getElementById('notif');
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 4000);
+}, 1500);
+
+// ===================== TABS =====================
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===================== QUIZ GAME =====================
+const quizData = [
+  { q: "Who created Terraria?", opts: ["Redigit (Andrew Spinks)", "Notch (Markus Persson)", "Phil Fish", "Edmund McMillen"], a: 0 },
+  { q: "When was Terraria first released?", opts: ["May 16, 2011", "June 3, 2010", "November 18, 2011", "March 7, 2013"], a: 0 },
+  { q: "What update added the Crimson biome?", opts: ["v1.0", "v1.1", "v1.2", "v1.3"], a: 2 },
+  { q: "What is the final boss of vanilla Terraria?", opts: ["Plantera", "Skeletron Prime", "Moon Lord", "Golem"], a: 2 },
+  { q: "How many copies has Terraria sold by 2025?", opts: ["10 million", "25 million", "64 million", "100 million"], a: 2 },
+  { q: "What does defeating the Wall of Flesh trigger?", opts: ["New NPCs", "Hardmode", "The Lunar Events", "Expert Mode"], a: 1 },
+  { q: "What is the name of Terraria's 'final' update (v1.4)?", opts: ["Last Hurrah", "Journey's End", "The Final Frontier", "End of Days"], a: 1 },
+  { q: "Which YouTuber is famous for Terraria building for official trailers?", opts: ["ChippyGaming", "Pedguin", "Khaios", "HappyDays"], a: 2 },
+  { q: "Which mod's soundtrack ranked higher than Terraria itself in a 2024 poll?", opts: ["Thorium Mod", "Spirit Mod", "Stars Above", "Calamity Mod"], a: 3 },
+  { q: "What studio/company published Terraria on consoles?", opts: ["Re-Logic", "505 Games", "Chucklefish", "Devolver Digital"], a: 1 },
+  { q: "What framework was Terraria originally built on?", opts: ["Unity", "Unreal Engine", "Microsoft XNA", "GameMaker"], a: 2 },
+  { q: "What is the name of the Terraria: Otherworld spin-off's fate?", opts: ["Released 2019", "Released 2020", "Cancelled 2018", "Still in development"], a: 2 },
+];
+
+let currentQ = 0, quizScore = 0, quizAnswered = false;
+
+function loadQuiz() {
+  if (currentQ >= quizData.length) {
+    document.getElementById('q-text').textContent = `GAME OVER! Final Score: ${quizScore}/${quizData.length}`;
+    document.getElementById('q-opts').innerHTML = `<button class="quiz-btn" onclick="restartQuiz()" style="grid-column:1/-1">▶ PLAY AGAIN</button>`;
+    document.getElementById('q-feedback').textContent = quizScore >= 8 ? '🏆 TERRARIA MASTER!' : quizScore >= 5 ? '⚔ GOOD ADVENTURER!' : '🌱 KEEP EXPLORING!';
+    document.getElementById('quiz-prog').textContent = 'DONE!';
+    return;
+  }
+  const q = quizData[currentQ];
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-feedback').textContent = '';
+  document.getElementById('quiz-prog').textContent = `Q ${currentQ+1}/${quizData.length}`;
+  quizAnswered = false;
+  const optsDiv = document.getElementById('q-opts');
+  optsDiv.innerHTML = '';
+  const shuffled = q.opts.map((o, i) => ({o, i}));
+  shuffled.forEach(({o, i}) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-btn';
+    btn.textContent = o;
+    btn.onclick = () => answerQuiz(i, q.a, btn);
+    optsDiv.appendChild(btn);
+  });
+}
+
+function answerQuiz(chosen, correct, btn) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const btns = document.querySelectorAll('.quiz-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === correct) b.classList.add('correct');
+  });
+  if (chosen === correct) {
+    quizScore++;
+    document.getElementById('q-feedback').textContent = '✅ CORRECT! +1 Point';
+    document.getElementById('q-feedback').style.color = '#5ecb4b';
+    btn.classList.add('correct');
+  } else {
+    document.getElementById('q-feedback').textContent = '❌ Wrong! Better luck next time';
+    document.getElementById('q-feedback').style.color = '#e84040';
+    btn.classList.add('wrong');
+  }
+  document.getElementById('q-score').textContent = `SCORE: ${quizScore}`;
+  setTimeout(() => { currentQ++; loadQuiz(); }, 1800);
+}
+
+function restartQuiz() { currentQ = 0; quizScore = 0; loadQuiz(); }
+
+loadQuiz();
+
+// ===================== RUNNER GAME =====================
+const runnerCanvas = document.getElementById('runner-canvas');
+const rctx = runnerCanvas.getContext('2d');
+let runnerState = 'idle';
+let runnerScore = 0, runnerBest = 0;
+let playerY = 110, playerVY = 0, playerX = 50;
+let onGround = true;
+let obstacles = [];
+let runnerBG = [];
+let runnerFrame = 0, runnerSpeed = 3;
+let rAF;
+
+// Init BG layers
+for (let i = 0; i < 20; i++) runnerBG.push({ x: i * 60, y: 20 + Math.random() * 40, type: Math.floor(Math.random() * 3) });
+
+function drawRunner() {
+  const W = runnerCanvas.width, H = runnerCanvas.height;
+  rctx.clearRect(0, 0, W, H);
+
+  // Sky
+  rctx.fillStyle = '#1a2a4a';
+  rctx.fillRect(0, 0, W, H);
+
+  // Stars
+  rctx.fillStyle = '#fff';
+  [20,50,90,130,180,240,300,360].forEach((x,i) => {
+    if (runnerState === 'playing') x -= (runnerFrame * 0.2) % W;
+    rctx.fillRect(((x % W + W) % W), 10 + i * 12, 2, 2);
+  });
+
+  // Ground
+  for (let gx = 0; gx < W + 16; gx += 16) {
+    const ox = runnerState === 'playing' ? -(runnerFrame * runnerSpeed) % 16 : 0;
+    rctx.fillStyle = '#3a8c2f';
+    rctx.fillRect(gx + ox - 8, H - 32, 15, 8);
+    rctx.fillStyle = '#6b4423';
+    rctx.fillRect(gx + ox - 8, H - 24, 15, 24);
+  }
+
+  // Player (pixel character)
+  const py = playerY;
+  // Body
+  rctx.fillStyle = '#4488ff';
+  rctx.fillRect(playerX, py, 14, 16);
+  // Head
+  rctx.fillStyle = '#ffcc88';
+  rctx.fillRect(playerX + 2, py - 12, 10, 10);
+  // Eyes
+  rctx.fillStyle = '#000';
+  rctx.fillRect(playerX + 5, py - 10, 2, 2);
+  rctx.fillRect(playerX + 9, py - 10, 2, 2);
+  // Sword
+  rctx.fillStyle = '#c0c0c0';
+  rctx.fillRect(playerX + 14, py + 2, 10, 3);
+  rctx.fillStyle = '#8b4513';
+  rctx.fillRect(playerX + 13, py + 1, 3, 5);
+  // Legs (walking animation)
+  rctx.fillStyle = '#224488';
+  if (runnerState === 'playing') {
+    const step = Math.floor(runnerFrame * 0.3) % 2;
+    rctx.fillRect(playerX + 2, py + 16, 4, step === 0 ? 8 : 5);
+    rctx.fillRect(playerX + 8, py + 16, 4, step === 0 ? 5 : 8);
+  } else {
+    rctx.fillRect(playerX + 2, py + 16, 4, 8);
+    rctx.fillRect(playerX + 8, py + 16, 4, 8);
+  }
+
+  // Obstacles (slimes)
+  obstacles.forEach(obs => {
+    rctx.fillStyle = obs.color;
+    // Slime body
+    rctx.fillRect(obs.x, obs.y, 20, 16);
+    rctx.fillRect(obs.x + 2, obs.y - 4, 16, 8);
+    rctx.fillRect(obs.x + 4, obs.y - 6, 12, 4);
+    // Slime eyes
+    rctx.fillStyle = '#000';
+    rctx.fillRect(obs.x + 4, obs.y + 2, 4, 4);
+    rctx.fillRect(obs.x + 12, obs.y + 2, 4, 4);
+    rctx.fillStyle = '#fff';
+    rctx.fillRect(obs.x + 5, obs.y + 3, 2, 2);
+    rctx.fillRect(obs.x + 13, obs.y + 3, 2, 2);
+  });
+
+  // Score
+  rctx.fillStyle = '#f5c518';
+  rctx.font = 'bold 12px "Press Start 2P", monospace';
+  if (runnerState === 'playing') rctx.fillText(`${Math.floor(runnerScore)}`, 8, 20);
+  if (runnerState === 'dead') {
+    rctx.fillStyle = 'rgba(0,0,0,0.6)';
+    rctx.fillRect(0,0,W,H);
+    rctx.fillStyle = '#ff4444';
+    rctx.font = '10px "Press Start 2P"';
+    rctx.textAlign = 'center';
+    rctx.fillText('GAME OVER!', W/2, H/2 - 15);
+    rctx.fillStyle = '#f5c518';
+    rctx.fillText(`SCORE: ${Math.floor(runnerScore)}`, W/2, H/2 + 5);
+    rctx.textAlign = 'left';
+  }
+  if (runnerState === 'idle') {
+    rctx.fillStyle = 'rgba(0,0,0,0.4)';
+    rctx.fillRect(0,0,W,H);
+    rctx.fillStyle = '#f5c518';
+    rctx.font = '8px "Press Start 2P"';
+    rctx.textAlign = 'center';
+    rctx.fillText('PRESS START', W/2, H/2);
+    rctx.textAlign = 'left';
+  }
+}
+
+function runnerLoop() {
+  if (runnerState !== 'playing') { drawRunner(); return; }
+
+  runnerFrame++;
+  runnerScore += 0.05;
+  runnerSpeed = 3 + runnerScore * 0.01;
+  document.getElementById('runner-score').textContent = `SCORE: ${Math.floor(runnerScore)}`;
+
+  // Physics
+  if (!onGround) {
+    playerVY += 0.8;
+    playerY += playerVY;
+  }
+  const groundY = runnerCanvas.height - 56;
+  if (playerY >= groundY) {
+    playerY = groundY;
+    playerVY = 0;
+    onGround = true;
+  }
+
+  // Obstacles
+  if (runnerFrame % Math.max(40, 70 - Math.floor(runnerScore * 0.5)) === 0) {
+    const colors = ['#4488ff','#44cc44','#cc4444','#cc44cc','#cccc44'];
+    obstacles.push({
+      x: runnerCanvas.width + 20,
+      y: runnerCanvas.height - 56,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    });
+  }
+
+  obstacles.forEach(o => { o.x -= runnerSpeed; });
+  obstacles = obstacles.filter(o => o.x > -30);
+
+  // Collision
+  obstacles.forEach(obs => {
+    if (
+      playerX + 12 > obs.x + 2 &&
+      playerX + 2 < obs.x + 18 &&
+      playerY + 14 > obs.y + 2 &&
+      playerY < obs.y + 14
+    ) {
+      runnerState = 'dead';
+      if (runnerScore > runnerBest) {
+        runnerBest = Math.floor(runnerScore);
+        document.getElementById('runner-hi').textContent = `BEST: ${runnerBest}`;
+      }
+      document.getElementById('runner-score').textContent = `SCORE: ${Math.floor(runnerScore)} — DEAD!`;
+    }
+  });
+
+  drawRunner();
+  rAF = requestAnimationFrame(runnerLoop);
+}
+
+function startRunner() {
+  if (runnerState === 'playing') return;
+  playerY = runnerCanvas.height - 56;
+  playerVY = 0;
+  onGround = true;
+  obstacles = [];
+  runnerScore = 0;
+  runnerFrame = 0;
+  runnerSpeed = 3;
+  runnerState = 'playing';
+  cancelAnimationFrame(rAF);
+  runnerLoop();
+}
+
+function jumpRunner() {
+  if (runnerState === 'dead') { startRunner(); return; }
+  if (runnerState === 'idle') { startRunner(); return; }
+  if (onGround) {
+    playerVY = -12;
+    onGround = false;
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jumpRunner(); }
+});
+runnerCanvas.addEventListener('click', jumpRunner);
+drawRunner();
+
+// ===================== ITEM GUESSER GAME =====================
+const itemDB = [
+  { icon: '⚔', name: 'Night\'s Edge', hint: 'Best pre-Hardmode sword, crafted from 4 evil swords' },
+  { icon: '🌙', name: 'Terra Blade', hint: 'Powerful Hardmode sword that fires a True Sword Beam' },
+  { icon: '😺', name: 'Meowmere', hint: 'Moon Lord drop; shoots cats, highest base sword damage' },
+  { icon: '🏹', name: 'Tsunami', hint: 'Duke Fishron bow; fires 5 arrows simultaneously' },
+  { icon: '🔥', name: 'Flamethrower', hint: 'Ranged weapon that sprays fire; uses Gel as ammo' },
+  { icon: '🌊', name: 'Trident', hint: 'Spear weapon found in Water Chests in the Ocean biome' },
+  { icon: '⭐', name: 'Starfury', hint: 'Sword from Skyware Chests; calls stars from the sky' },
+  { icon: '🔱', name: 'Poseidon', hint: 'Magic weapon that fires bubble-like water spheres' },
+  { icon: '🌀', name: 'Terrarian', hint: 'Moon Lord yoyo that fires swirling projectile rings' },
+  { icon: '🍄', name: 'Mushroom Spear', hint: 'Spear crafted in the Glowing Mushroom biome' },
+  { icon: '🎯', name: 'Star Cannon', hint: 'Uses Fallen Stars as ammo; devastating ranged weapon' },
+  { icon: '🌸', name: 'Terraprisma', hint: 'Only obtainable by defeating daytime EoL with no damage' },
+  { icon: '❄', name: 'Blizzard Staff', hint: 'Magic weapon that rains icy shards from above' },
+  { icon: '🦋', name: 'Last Prism', hint: 'Moon Lord magic weapon; fires 6 converging rainbow beams' },
+  { icon: '💜', name: 'Daedalus Stormbow', hint: 'Hardmode bow that fires Holy Arrows from the sky' },
+];
+
+let itemScore = 0, itemQ = 0;
+
+function startItemGame() {
+  itemScore = 0;
+  itemQ = 0;
+  document.getElementById('item-score-disp').textContent = 'SCORE: 0';
+  nextItem();
+}
+
+function nextItem() {
+  if (itemQ >= 8) {
+    document.getElementById('item-display').textContent = '🏆';
+    document.getElementById('item-hint').textContent = `Final Score: ${itemScore}/8`;
+    document.getElementById('item-opts').innerHTML = '';
+    return;
+  }
+  const correct = itemDB[Math.floor(Math.random() * itemDB.length)];
+  document.getElementById('item-display').textContent = correct.icon;
+  document.getElementById('item-hint').textContent = `Hint: ${correct.hint}`;
+
+  const options = [correct];
+  while (options.length < 4) {
+    const candidate = itemDB[Math.floor(Math.random() * itemDB.length)];
+    if (!options.find(o => o.name === candidate.name)) options.push(candidate);
+  }
+  options.sort(() => Math.random() - 0.5);
+
+  const optsDiv = document.getElementById('item-opts');
+  optsDiv.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'item-opt-btn';
+    btn.textContent = opt.name;
+    btn.onclick = () => {
+      document.querySelectorAll('.item-opt-btn').forEach(b => { b.disabled = true; });
+      if (opt.name === correct.name) {
+        btn.classList.add('correct');
+        itemScore++;
+        document.getElementById('item-score-disp').textContent = `SCORE: ${itemScore}`;
+      } else {
+        btn.classList.add('wrong');
+        document.querySelectorAll('.item-opt-btn').forEach(b => {
+          if (b.textContent === correct.name) b.classList.add('correct');
+        });
+      }
+      itemQ++;
+      setTimeout(nextItem, 1500);
+    };
+    optsDiv.appendChild(btn);
+  });
+}
+
+// ===================== MEMORY GAME =====================
+const memIcons = ['⚔','🌙','👁','💀','🌿','🔥','❄','🏰'];
+let memFlipped = [], memMatched = 0, memMoves = 0, memLocked = false;
+
+function initMemory() {
+  const grid = document.getElementById('memory-grid');
+  grid.innerHTML = '';
+  memFlipped = [];
+  memMatched = 0;
+  memMoves = 0;
+  memLocked = false;
+  document.getElementById('mem-moves').textContent = 'MOVES: 0';
+  document.getElementById('mem-status').textContent = 'Match all pairs to win!';
+
+  const cards = [...memIcons, ...memIcons].sort(() => Math.random() - 0.5);
+  cards.forEach((icon, idx) => {
+    const card = document.createElement('div');
+    card.className = 'mem-card';
+    card.dataset.icon = icon;
+    card.dataset.idx = idx;
+    card.innerHTML = `<span class="card-front">?</span><span class="card-back">${icon}</span>`;
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => flipCard(card));
+    grid.appendChild(card);
+  });
+}
+
+function flipCard(card) {
+  if (memLocked) return;
+  if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  card.classList.add('flipped');
+  memFlipped.push(card);
+
+  if (memFlipped.length === 2) {
+    memMoves++;
+    document.getElementById('mem-moves').textContent = `MOVES: ${memMoves}`;
+    memLocked = true;
+
+    if (memFlipped[0].dataset.icon === memFlipped[1].dataset.icon) {
+      memFlipped[0].classList.add('matched');
+      memFlipped[1].classList.add('matched');
+      memFlipped = [];
+      memMatched++;
+      memLocked = false;
+      if (memMatched === memIcons.length) {
+        document.getElementById('mem-status').textContent = `🏆 YOU WIN! ${memMoves} moves`;
+      }
+    } else {
+      setTimeout(() => {
+        memFlipped.forEach(c => c.classList.remove('flipped'));
+        memFlipped = [];
+        memLocked = false;
+      }, 900);
+    }
+  }
+}
+
+initMemory();
+
+// ===================== SCROLL ANIMATIONS =====================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.figure-card, .boss-card, .yt-card, .biome-card, .update-card, .mod-card, .ach-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+  observer.observe(el);
+});
+
+// ===================== COUNTER ANIMATION =====================
+const counters = document.querySelectorAll('[data-target]');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      let current = 0;
+      const step = target / 60;
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = target >= 100000 ? (current/1000000).toFixed(1)+'M' : Math.floor(current).toLocaleString();
+      }, 20);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+counters.forEach(c => counterObserver.observe(c));
+
+// ===================== CREDITS CANVAS =====================
+const credCanvas = document.getElementById('credits-canvas');
+const cctx = credCanvas.getContext('2d');
+
+function resizeCred() {
+  credCanvas.width  = credCanvas.offsetWidth  || window.innerWidth;
+  credCanvas.height = credCanvas.offsetHeight || window.innerHeight;
+}
+resizeCred();
+window.addEventListener('resize', resizeCred);
+
+// Falling stars / pixels
+const credStars = Array.from({length: 160}, () => ({
+  x: Math.random(),
+  y: Math.random(),
+  vy: 0.0004 + Math.random() * 0.001,
+  size: Math.random() < 0.3 ? 4 : 2,
+  color: ['#f5c518','#5ecb4b','#e84393','#80c0ff','#ff6b00','#c080ff'][Math.floor(Math.random()*6)],
+  alpha: Math.random(),
+  twinkle: Math.random() * Math.PI * 2,
+  twinkleSpeed: 0.02 + Math.random() * 0.04
+}));
+
+// Shooting stars
+const shooters = [];
+let credFrame = 0;
+
+function spawnShooter() {
+  shooters.push({
+    x: Math.random(), y: 0,
+    vx: 0.003 + Math.random() * 0.005,
+    vy: 0.002 + Math.random() * 0.003,
+    life: 1, fade: 0.015 + Math.random() * 0.01,
+    tail: []
+  });
+}
+
+// Pixelated fireworks
+const fireworks = [];
+
+function spawnFirework(cx, cy) {
+  const color = ['#f5c518','#e84393','#5ecb4b','#80c0ff','#ff6b00'][Math.floor(Math.random()*5)];
+  for (let i = 0; i < 24; i++) {
+    const angle = (i / 24) * Math.PI * 2;
+    const speed = 1.5 + Math.random() * 2;
+    fireworks.push({
+      x: cx, y: cy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 1, color, size: Math.random() < 0.5 ? 4 : 6,
+      gravity: 0.08
+    });
+  }
+}
+
+let lastFirework = 0;
+
+function drawCreditsCanvas() {
+  const W = credCanvas.width, H = credCanvas.height;
+  credFrame++;
+
+  // Background
+  cctx.fillStyle = 'rgba(2,2,10,0.85)';
+  cctx.fillRect(0, 0, W, H);
+
+  // Nebula blobs
+  const nTime = credFrame * 0.004;
+  const blobs = [
+    { x: 0.2, y: 0.3, r: 200, c: 'rgba(126,60,206,0.06)' },
+    { x: 0.7, y: 0.6, r: 250, c: 'rgba(232,67,147,0.05)' },
+    { x: 0.5, y: 0.1, r: 180, c: 'rgba(245,197,24,0.04)' },
+    { x: 0.85, y: 0.8, r: 150, c: 'rgba(94,203,75,0.04)' },
+  ];
+  blobs.forEach(b => {
+    const bx = b.x * W + Math.sin(nTime + b.x * 10) * 30;
+    const by = b.y * H + Math.cos(nTime + b.y * 10) * 20;
+    const grd = cctx.createRadialGradient(bx, by, 0, bx, by, b.r);
+    grd.addColorStop(0, b.c);
+    grd.addColorStop(1, 'transparent');
+    cctx.fillStyle = grd;
+    cctx.fillRect(0, 0, W, H);
+  });
+
+  // Falling pixel stars
+  credStars.forEach(s => {
+    s.y += s.vy;
+    if (s.y > 1) { s.y = 0; s.x = Math.random(); }
+    s.twinkle += s.twinkleSpeed;
+    const alpha = (0.3 + 0.7 * (Math.sin(s.twinkle) * 0.5 + 0.5)) * s.alpha;
+    cctx.fillStyle = s.color.replace(')', `,${alpha})`).replace('rgb', 'rgba').replace('rgba(rgba', 'rgba');
+    // Use hex + alpha via globalAlpha instead
+    cctx.globalAlpha = 0.2 + 0.8 * (Math.sin(s.twinkle) * 0.5 + 0.5);
+    cctx.fillStyle = s.color;
+    cctx.fillRect(Math.round(s.x * W), Math.round(s.y * H), s.size, s.size);
+    cctx.globalAlpha = 1;
+  });
+
+  // Shooting stars
+  if (credFrame % 80 === 0) spawnShooter();
+  for (let i = shooters.length - 1; i >= 0; i--) {
+    const sh = shooters[i];
+    sh.x += sh.vx; sh.y += sh.vy;
+    sh.life -= sh.fade;
+    sh.tail.push({ x: sh.x * W, y: sh.y * H });
+    if (sh.tail.length > 12) sh.tail.shift();
+    if (sh.life <= 0 || sh.x > 1.2 || sh.y > 1.1) { shooters.splice(i,1); continue; }
+    for (let t = 0; t < sh.tail.length; t++) {
+      cctx.globalAlpha = (t / sh.tail.length) * sh.life * 0.8;
+      cctx.fillStyle = '#fff';
+      const sz = Math.max(1, Math.round((t / sh.tail.length) * 4));
+      cctx.fillRect(Math.round(sh.tail[t].x), Math.round(sh.tail[t].y), sz, sz);
+    }
+    cctx.globalAlpha = 1;
+  }
+
+  // Fireworks
+  const now = Date.now();
+  if (now - lastFirework > 2500) {
+    lastFirework = now;
+    spawnFirework(W * (0.2 + Math.random() * 0.6), H * (0.1 + Math.random() * 0.5));
+  }
+  for (let i = fireworks.length - 1; i >= 0; i--) {
+    const fw = fireworks[i];
+    fw.x += fw.vx; fw.y += fw.vy;
+    fw.vy += fw.gravity;
+    fw.vx *= 0.97; fw.vy *= 0.97;
+    fw.life -= 0.018;
+    if (fw.life <= 0) { fireworks.splice(i,1); continue; }
+    cctx.globalAlpha = fw.life;
+    cctx.fillStyle = fw.color;
+    cctx.fillRect(Math.round(fw.x), Math.round(fw.y), fw.size, fw.size);
+    cctx.globalAlpha = 1;
+  }
+
+  requestAnimationFrame(drawCreditsCanvas);
+}
+
+// Only run when in view
+const credObserver = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    drawCreditsCanvas();
+    credObserver.disconnect();
+  }
+}, { threshold: 0.1 });
+credObserver.observe(document.getElementById('credits'));
+
+// ===================== PIXEL CHARACTER ANIMATION =====================
+const charCanvas = document.getElementById('char-canvas');
+const charCtx = charCanvas.getContext('2d');
+let charFrame = 0;
+let charWalking = true;
+let charFacing = 1; // 1 = right, -1 = left
+let charX = 10;
+const charW = charCanvas.width;
+
+function drawPixelChar() {
+  const ctx = charCtx;
+  ctx.clearRect(0, 0, charCanvas.width, charCanvas.height);
+
+  charFrame++;
+  if (charWalking) {
+    charX += charFacing * 0.6;
+    if (charX > charW - 30) charFacing = -1;
+    if (charX < 10) charFacing = 1;
+  }
+
+  const S = 3; // pixel size
+  const bx = Math.round(charX);
+  const by = 20; // top of character
+
+  ctx.save();
+  if (charFacing === -1) {
+    ctx.translate(charCanvas.width, 0);
+    ctx.scale(-1, 1);
+  }
+
+  const drawPx = (px, py, color) => {
+    ctx.fillStyle = color;
+    if (charFacing === -1) {
+      ctx.fillRect(charCanvas.width - bx - px*S - S, by + py*S, S, S);
+    } else {
+      ctx.fillRect(bx + px*S, by + py*S, S, S);
+    }
+  };
+  ctx.restore();
+
+  const px = (px, py, color) => {
+    const rx = charFacing === 1 ? bx + px*S : charCanvas.width - bx - px*S - S;
+    ctx.fillStyle = color;
+    ctx.fillRect(rx, by + py*S, S, S);
+  };
+
+  // Hair
+  px(1,0,'#f5a623'); px(2,0,'#f5a623'); px(3,0,'#f5a623'); px(4,0,'#f5a623');
+  px(0,1,'#f5a623'); px(1,1,'#ffcc88'); px(2,1,'#ffcc88'); px(3,1,'#ffcc88'); px(4,1,'#f5a623'); px(5,1,'#f5a623');
+  // Face
+  px(0,2,'#ffcc88'); px(1,2,'#ffcc88'); px(2,2,'#ffcc88'); px(3,2,'#ffcc88'); px(4,2,'#ffcc88'); px(5,2,'#ffcc88');
+  px(0,3,'#ffcc88'); px(1,3,'#222'); px(2,3,'#ffcc88'); px(3,3,'#222'); px(4,3,'#ffcc88');
+  px(0,4,'#ffcc88'); px(1,4,'#ffcc88'); px(2,4,'#ffcc88'); px(3,4,'#ffcc88'); px(4,4,'#ffcc88');
+  px(1,5,'#cc6644'); px(2,5,'#cc6644'); px(3,5,'#cc6644');
+  // Body (shirt — gold/terraria themed)
+  px(0,6,'#f5c518'); px(1,6,'#f5c518'); px(2,6,'#f5c518'); px(3,6,'#f5c518'); px(4,6,'#f5c518'); px(5,6,'#f5c518');
+  px(0,7,'#f5c518'); px(1,7,'#c49b0a'); px(2,7,'#f5c518'); px(3,7,'#f5c518'); px(4,7,'#c49b0a'); px(5,7,'#f5c518');
+  px(0,8,'#f5c518'); px(1,8,'#f5c518'); px(2,8,'#f5c518'); px(3,8,'#f5c518'); px(4,8,'#f5c518'); px(5,8,'#f5c518');
+  // Arms
+  const swing = Math.sin(charFrame * 0.18) * 1.5;
+  px(-1, 6+Math.round(swing), '#ffcc88');
+  px(-1, 7+Math.round(swing), '#ffcc88');
+  px(6, 6-Math.round(swing), '#ffcc88');
+  px(6, 7-Math.round(swing), '#ffcc88');
+  // Sword in right hand
+  ctx.fillStyle = '#c0c0c0';
+  const swordArmY = by + (6-Math.round(swing))*S;
+  const swordArmX = charFacing === 1 ? bx + 7*S : charCanvas.width - bx - 7*S - S;
+  ctx.fillRect(swordArmX, swordArmY - S*2, S, S*5);
+  ctx.fillStyle = '#8b4513';
+  ctx.fillRect(swordArmX - S, swordArmY + S, S*3, S);
+  // Pants
+  px(0,9,'#224488'); px(1,9,'#224488'); px(2,9,'#224488'); px(3,9,'#224488'); px(4,9,'#224488'); px(5,9,'#224488');
+  // Legs (walking)
+  const step = Math.floor(charFrame * 0.2) % 4;
+  if (step === 0 || step === 2) {
+    px(1,10,'#224488'); px(2,10,'#224488');
+    px(3,10,'#224488'); px(4,10,'#224488');
+    px(1,11,'#224488'); px(2,11,'#3a5a9a');
+    px(3,11,'#224488'); px(4,11,'#3a5a9a');
+  } else if (step === 1) {
+    px(0,10,'#224488'); px(1,10,'#224488');
+    px(3,10,'#224488'); px(4,10,'#224488');
+    px(0,11,'#3a5a9a'); px(1,11,'#224488');
+    px(4,11,'#3a5a9a'); px(5,11,'#224488');
+  } else {
+    px(2,10,'#224488'); px(3,10,'#224488');
+    px(1,10,'#224488'); px(4,10,'#224488');
+    px(2,11,'#3a5a9a'); px(3,11,'#224488');
+    px(1,11,'#224488'); px(4,11,'#3a5a9a');
+  }
+  // Shoes
+  const shoeStep = Math.floor(charFrame * 0.2) % 4;
+  px(0,12,'#4a3020'); px(1,12,'#4a3020');
+  px(3,12,'#4a3020'); px(4,12,'#4a3020');
+
+  requestAnimationFrame(drawPixelChar);
+}
+drawPixelChar();
+
+// ===================== CREDITS BAR ANIMATION =====================
+const barObserver = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    document.querySelectorAll('.cred-bar-fill').forEach((bar, i) => {
+      setTimeout(() => {
+        bar.style.width = bar.dataset.w;
+        bar.style.background = `linear-gradient(90deg, ${bar.dataset.color}88, ${bar.dataset.color})`;
+        bar.style.boxShadow = `0 0 8px ${bar.dataset.color}66`;
+      }, i * 200);
+    });
+    barObserver.disconnect();
+  }
+}, { threshold: 0.5 });
+if (document.querySelector('.cred-bar-fill')) {
+  barObserver.observe(document.querySelector('.credits-player-card'));
+}
+
+// ===================== ROLLING CREDITS AUTO-SCROLL =====================
+function initRollingCredits() {
+  const wrap = document.getElementById('rollingCredits');
+  if (!wrap) return;
+  const inner = document.createElement('div');
+  inner.className = 'rolling-credits-inner';
+  inner.innerHTML = wrap.innerHTML;
+  wrap.innerHTML = '';
+  wrap.appendChild(inner);
+
+  let pos = wrap.offsetHeight;
+  let rAF2;
+
+  function roll() {
+    pos -= 0.6;
+    if (pos < -(inner.scrollHeight)) pos = wrap.offsetHeight + 20;
+    inner.style.transform = `translateY(${pos}px)`;
+    rAF2 = requestAnimationFrame(roll);
+  }
+
+  // Pause on hover
+  wrap.addEventListener('mouseenter', () => cancelAnimationFrame(rAF2));
+  wrap.addEventListener('mouseleave', () => { rAF2 = requestAnimationFrame(roll); });
+
+  const rcObserver = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { rAF2 = requestAnimationFrame(roll); }
+    else { cancelAnimationFrame(rAF2); }
+  }, { threshold: 0.1 });
+  rcObserver.observe(wrap);
+}
+initRollingCredits();
+
+// ===================== NAME PARTICLE BURST =====================
+function spawnNameParticles() {
+  const wrap = document.getElementById('nameParticles');
+  if (!wrap) return;
+  const icons = ['⭐','✨','💫','🌟','⚔','🏆','💎','🔥','⛏'];
+  for (let i = 0; i < 20; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.style.cssText = `
+        position:absolute;
+        left:${10+Math.random()*80}%;
+        top:${10+Math.random()*80}%;
+        font-size:${10+Math.random()*14}px;
+        animation:namePop 1.2s ease forwards;
+        pointer-events:none;
+        z-index:10;
+      `;
+      el.textContent = icons[Math.floor(Math.random()*icons.length)];
+      wrap.appendChild(el);
+      setTimeout(() => el.remove(), 1300);
+    }, i * 80);
+  }
+}
+
+// Inject namePop keyframe
+const styleTag = document.createElement('style');
+styleTag.textContent = `
+@keyframes namePop {
+  0%   { opacity:0; transform:translate(0,0) scale(0) rotate(0deg); }
+  40%  { opacity:1; transform:translate(${Math.random()>0.5?'':'-'}${20+Math.random()*40}px,${-(20+Math.random()*40)}px) scale(1.2) rotate(${Math.random()*60-30}deg); }
+  100% { opacity:0; transform:translate(${Math.random()>0.5?'':'-'}${40+Math.random()*80}px,${-(60+Math.random()*80)}px) scale(0.5) rotate(${Math.random()*180}deg); }
+}
+`;
+document.head.appendChild(styleTag);
+
+// Trigger name particles when credits section is visible
+const nameObserver = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    spawnNameParticles();
+    setTimeout(spawnNameParticles, 2000);
+    setTimeout(spawnNameParticles, 4500);
+  }
+}, { threshold: 0.3 });
+const credSection = document.getElementById('credits');
+if (credSection) nameObserver.observe(credSection);
+
+// ===================== NAV ACTIVE STATE =====================
+const navLinks = document.querySelectorAll('.nav-links a');
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.borderColor = a.getAttribute('href') === `#${current}` ? 'var(--gold)' : 'transparent';
+    a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--gold)' : '';
+  });
+});
+</script>
+</body>
+</html>
